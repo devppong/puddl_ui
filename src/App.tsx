@@ -1,26 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import "./App.css";
+import Dashboard from "./Layout/Dashboard/Dashboard";
+import Landing from "./Layout/Landing/Landing";
+import { useGoogleLogin, googleLogout } from "@react-oauth/google";
+
+// const MainContentWrapper = styled("div")(({ theme }) => ({
+// 	flexGrow: 1,
+// 	padding: theme.spacing(3),
+// }));
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("isLoggedIn")?true:false);
+
+	const login = useGoogleLogin({
+		onSuccess: (tokenResponse) => {
+			console.log(tokenResponse);
+			setIsLoggedIn(true);
+			localStorage.setItem("isLoggedIn", 'true');
+		},
+	});
+
+	const logout =() => {
+		googleLogout();
+		setIsLoggedIn(false);
+		localStorage.removeItem("isLoggedIn");
+	};
+
+	return isLoggedIn ? (
+		<Dashboard setLogout={logout} />
+	) : (
+		<Landing setLogin={login} />
+	);
 }
 
 export default App;
