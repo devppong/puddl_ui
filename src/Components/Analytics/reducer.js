@@ -78,6 +78,24 @@ export default function reducer(state, action) {
                 [action.fieldName]: action.payload,
             };
         }
+        case 'UPDATE_HOURLY_REQUESTS_DATA':{
+            return {
+                ...state,
+                [action.fieldName]: action.payload,
+            };
+        }
+        case 'AVG_DAILY_REQUESTS':{
+            return {
+                ...state,
+                [action.fieldName]: action.payload,
+            };
+        }
+        case 'UPDATE_API_KEY':{
+            return {
+                ...state,
+                [action.fieldName]: action.payload,
+            };
+        }
         default:
             return state;
     }

@@ -1,21 +1,44 @@
 import axios from "axios";
 import moment from "moment";
 const countries = require('iso-country-currency');
+const prompt_api_url = "https://puddlapi.puddl.io/prompt"
 
-const axiosGet = async (url) => {
-    const token = "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";
-    const config = {
+const getOpenAIHeaders = (token) => {
+    const headers = {
         headers: {
             Authorization: `Bearer ${token}`,
         },
     };
-    const response = await axios.get(url, config);
+    return headers;
+}
+
+const getToken = (state) =>{
+    return state.api_key;
+}
+
+const getPromptAPIHeaders = () => {
+    const headers = {headers:{'Content-Type': 'application/json'}}
+    return headers;
+}
+
+const axiosGet = async (url,headers) => {
+    const response = await axios.get(url, headers);
     if(response.status === 200)
         return response.data;
     else
         return null;
 }
 
+export const updateApiKey = async(dispatch,state, key) => {
+    await dispatch({
+        type: 'UPDATE_API_KEY',
+        fieldName: 'api_key',
+        payload: key
+    });
+    state.api_key = key;
+    getSubscriptionData(dispatch,state,key);
+    updateDateRange(dispatch, state, state.date_range);
+}
 
 export const updateDateRange= async(dispatch,state, date_range) => {
     dispatch({
@@ -42,10 +65,12 @@ export const getCostMetrics = async(dispatch,state,date_range) => {
         end_date = moment(date_range[1]).format("YYYY-MM-DD");
     }
     let url = `https://api.openai.com/dashboard/billing/usage?start_date=${start_date}&end_date=${end_date}`;
-    let chart_data = await axiosGet(url);
+    let token = getToken(state);
+    let headers = getOpenAIHeaders(token?token:"");
+    let chart_data = await axiosGet(url,headers);
     let comp_date_range = getCompDateRange(date_range);
     let comp_url = `https://api.openai.com/dashboard/billing/usage?start_date=${comp_date_range[0]}&end_date=${comp_date_range[1]}`;
-    let comp_chart_data = await axiosGet(comp_url);
+    let comp_chart_data = await axiosGet(comp_url,headers);
     if(!chart_data) return;
     dispatch({ type: 'UPDATE_CHART_DATA', payload: chart_data ,fieldName: 'chart_data'});
     dispatch({ type: 'UPDATE_COMP_CHART_DATA', payload: comp_chart_data ,fieldName: 'comp_chart_data'});
@@ -83,30 +108,62 @@ export const getKPIMetrics = async(dispatch,state,date_range) => {
     }
     const datesInRange = getAllDatesInRange(start_date, end_date);
     let promise_array = [];
+    let token = getToken(state);
+    let headers = getOpenAIHeaders(token?token:"");
     datesInRange.forEach(date => {
         let url = `https://api.openai.com/v1/usage?date=${date}`;
-        promise_array.push(axiosGet(url));
+        promise_array.push(axiosGet(url,headers));
     });
     let kpi_data = await Promise.all(promise_array);
     if(!kpi_data) return;
     parseKPIData(dispatch,kpi_data);
 }
 
+export const validateApiKey = async(api_key) => {
+    let headers = {
+        headers: {
+            Authorization: `Bearer ${api_key}`,
+        },
+    };
+
+    let url = `https://api.openai.com/v1/engines`;
+    let engines = await axiosGet(url,headers);
+    if(!engines) return false;
+    if(engines.error){
+        return false;
+    }
+    return true;
+}
+
 export const getSubscriptionData = async(dispatch,state) => {
+    let token = getToken(state);
+    let headers = getOpenAIHeaders(token?token:"");
     let url = `https://api.openai.com/dashboard/billing/subscription`;
-    let subscription_data = await axiosGet(url);
+    let subscription_data = await axiosGet(url,headers);
     if(!subscription_data) return;
     parseSubscriptionData(dispatch,subscription_data);
 }
 
-export const parseSubscriptionData = (dispatch,subscription_data) => {
+export const parseSubscriptionData = async (dispatch,subscription_data) => {
     let {soft_limit_usd,hard_limit_usd,billing_address} = subscription_data;
     let countryName = 'US';
     if(billing_address&&billing_address.country){
         countryName = billing_address.country;
     }
     let countryInfo = countries.getAllInfoByISO(countryName);
-    //TODO: call backend to get the exchange rate
+    let {currency} = countryInfo;
+    let url = prompt_api_url+`/currencyConversion/${currency}`
+    let headers = getPromptAPIHeaders();
+    try{
+        let exchangeRate = await axiosGet(url,headers);
+        let conversion = exchangeRate.conversion;
+        soft_limit_usd = soft_limit_usd*conversion;
+        hard_limit_usd = hard_limit_usd*conversion;
+    }catch(e){
+        console.log(e);
+    }
+    
+
     dispatch({
         type: 'UPDATE_SUBSCRIPTION_DATA',
         fieldName: 'subscription_data',
@@ -146,10 +203,20 @@ export const parseKPIData = (dispatch,kpi_data) => {
     let generated_tokens_map = {};
     let total_generated_tokens = 0;
 
+    let hourly_requests_map = {};
+    // for 00 to 23 hours of the day initialize the map with 0
+    for (let i = 0; i < 24; i++) {
+        if(i<10){
+            i = '0'+i;
+        }else{
+            i = ''+i;
+        }
+        hourly_requests_map[i] = 0;
+    }
     for (let i = 0; i < kpi_data.length; i++) {
         let data = kpi_data[i].data;
         for (let j = 0; j < data.length; j++) {
-            let {snapshot_id,n_requests,n_context_tokens_total,n_generated_tokens_total} = data[j];
+            let {snapshot_id,n_requests,n_context_tokens_total,n_generated_tokens_total,aggregation_timestamp} = data[j];
 
             total_requests += n_requests;
             if(requests_map[snapshot_id]){
@@ -157,7 +224,12 @@ export const parseKPIData = (dispatch,kpi_data) => {
             }else{
                 requests_map[snapshot_id] = n_requests;
             }
-
+            let aggregation_hour = moment.unix(aggregation_timestamp).format("HH");
+            if(hourly_requests_map[aggregation_hour]){
+                hourly_requests_map[aggregation_hour] = hourly_requests_map[aggregation_hour] + n_requests;
+            }else{
+                hourly_requests_map[aggregation_hour] = n_requests;
+            }
             total_tokens = total_tokens+ n_generated_tokens_total+ n_context_tokens_total;
             if(tokens_map[snapshot_id]){
                 tokens_map[snapshot_id] = tokens_map[snapshot_id] + n_generated_tokens_total+n_context_tokens_total;
@@ -182,7 +254,7 @@ export const parseKPIData = (dispatch,kpi_data) => {
         }
     }
 
-    let requests_data=[], tokens_data=[], context_tokens_data=[], generated_tokens_data = [];
+    let requests_data=[], tokens_data=[], context_tokens_data=[], generated_tokens_data = [],hourly_requests_data=[];
     for (const [key, value] of Object.entries(requests_map)) {
         requests_data.push({name:key,value:value});
     }
@@ -195,7 +267,10 @@ export const parseKPIData = (dispatch,kpi_data) => {
     for (const [key, value] of Object.entries(generated_tokens_map)) {
         generated_tokens_data.push({name:key,value:value});
     }
-
+    for (const [key, value] of Object.entries(hourly_requests_map)) {
+        hourly_requests_data.push({name:key,Requests:value});
+    }
+    let avg_daily_requests = kpi_data.length && kpi_data.length>0 ? (total_requests/kpi_data.length).toFixed(0):0;
     dispatch({
         type: 'UPDATE_REQUESTS_DATA',
         fieldName: 'requests_data',
@@ -218,6 +293,18 @@ export const parseKPIData = (dispatch,kpi_data) => {
         type: 'UPDATE_GENERATED_TOKENS_DATA',
         fieldName: 'generated_tokens_data',
         payload: {"total_tokens":total_generated_tokens,"data":generated_tokens_data}
+    });
+
+    dispatch({
+        type: 'UPDATE_HOURLY_REQUESTS_DATA',
+        fieldName: 'hourly_requests_data',
+        payload: hourly_requests_data
+    });
+
+    dispatch({
+        type: 'AVG_DAILY_REQUESTS',
+        fieldName: 'avg_daily_requests',
+        payload: avg_daily_requests
     });
 }
 

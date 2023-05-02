@@ -1,5 +1,5 @@
 import { BarList, Card, Title, Bold, Flex, Text, Metric } from "@tremor/react";
-import { ChartBarIcon, SortAscendingIcon ,LightningBoltIcon } from "@heroicons/react/solid";
+import { ChartBarIcon,SortAscendingIcon ,LightningBoltIcon } from "@heroicons/react/solid";
 
 import {
     TabList,
@@ -79,7 +79,7 @@ export default function CompUITok({ state, dispatch }) {
             <Metric>{getTotalMetrics(showCard, state)}</Metric>
             <>
                 <TabList
-                    defaultValue="1"
+                    defaultValue="total"
                     onValueChange={(value) => setShowCard(value)}
                     className="mt-6"
                 >

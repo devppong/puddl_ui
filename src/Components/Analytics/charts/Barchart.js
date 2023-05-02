@@ -1,6 +1,7 @@
-import { Card, Title, BarChart, Metric,Flex,BadgeDelta } from "@tremor/react";
-import React from 'react';
+import { Card, Title, BarChart, Metric,Flex,BadgeDelta,Callout } from "@tremor/react";
+// import React, { useReducer } from 'react';
 // import moment from "moment";
+import { ExclamationIcon } from "@heroicons/react/solid";
 
 
 export default function Barchart({ state, dispatch }) {
@@ -13,9 +14,11 @@ export default function Barchart({ state, dispatch }) {
 
     let currency = "USD";
     let symbol = "$";
+    let soft_limit = 0;
     if(subscription_data&&subscription_data.countryInfo){
         currency = subscription_data.countryInfo.currency;
         symbol = subscription_data.countryInfo.symbol;
+        soft_limit = subscription_data.countryInfo.soft_limit_usd;
     }
     const dataFormatter = (number) => {
         return symbol+ " " + Intl.NumberFormat("us").format(number).toString();
@@ -30,13 +33,25 @@ export default function Barchart({ state, dispatch }) {
         
     }
     return (
-        <Card className="mt-6 gap-6">
-            <Flex>
-                <Title>Daily Usage {"("+currency+")"}</Title>
+        <Card className="h-full">
+            <Title>Daily Usage {"("+currency+")"}</Title>
+            <Flex className="max-w-sm">
+                <Metric>{symbol} {total_usage}</Metric>
                 <BadgeDelta deltaType={getDeltaType(total_usage_percentage_change)}>{total_usage_percentage_change}</BadgeDelta>
             </Flex>
+            {
+                (total_usage>soft_limit)&&(
+                    <Callout
+                        className="h-12 mt-4"
+                        title="Critical Alerts"
+                        icon={ExclamationIcon}
+                        color="rose"
+                    >
+                        Turbine reached critical speed. Immediately reduce turbine speed.
+                    </Callout>
+                )
+            }
             
-            <Metric>{symbol} {total_usage}</Metric>
             <BarChart
                 className="mt-6"
                 data={bar_chart_data}
