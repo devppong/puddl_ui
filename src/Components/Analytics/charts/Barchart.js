@@ -57,7 +57,7 @@ export default function Barchart({ state, dispatch }) {
                 data={bar_chart_data}
                 index="topic"
                 categories={filters}
-                colors={["blue", "teal", "amber", "rose", "indigo", "emerald"]}
+                colors={["blue", "teal","indigo", "emerald", "amber", "rose" ]}
                 valueFormatter={dataFormatter}
                 yAxisWidth={48}
                 stack={true}

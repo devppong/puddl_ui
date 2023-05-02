@@ -47,7 +47,7 @@ export default function Donutchart({ state, dispatch }) {
                 category="cost"
                 index="topic"
                 valueFormatter={valueFormatter}
-                colors={["blue", "teal", "amber", "rose", "indigo", "emerald"]}
+                colors={["blue", "teal","indigo", "emerald", "amber", "rose" ]}
             />
             <Flex>
                 <Text>{getPercentage(hard_limit,total_usage)}% of the limit</Text>
