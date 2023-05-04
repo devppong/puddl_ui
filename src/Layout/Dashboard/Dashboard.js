@@ -14,6 +14,7 @@ import {
 	Divider,
 	Menu,
 	MenuItem,
+	Stack,
 } from "@mui/material";
 import {
 	Menu as MenuIcon,
@@ -27,6 +28,7 @@ import Playground from "../../Components/Playground/Playground";
 import Settings from "../../Components/Settings/Settings";
 import Analytics from "../../Components/Analytics/Analytics";
 import PromptRegistry from "../../Components/PromptRegistry/PromptRegistry";
+import logo from "./../../assets/puddl-logo.png";
 
 const drawerWidth = 240;
 
@@ -130,20 +132,32 @@ function Dashboard(props) {
 						>
 							<MenuIcon />
 						</IconButton>
-						<Typography
-							component="h1"
-							variant="h6"
-							color="#2149D9"
-							noWrap
+						<Stack
+							direction={"row"}
 							sx={{ flexGrow: 1 }}
+							alignItems={"center"}
 						>
-							Puddl
-						</Typography>
-						<IconButton color="inherit">
+							<img
+								src={logo}
+								alt="logo"
+								style={{ height: "2rem", display: "inline" }}
+							/>
+							<Typography
+								variant="h5"
+								color="#1d4ed8"
+								noWrap
+								fontSize={"1.5rem"}
+								fontWeight={"bold"}
+								marginX={"0.75rem"}
+							>
+								Puddl
+							</Typography>
+						</Stack>
+						{/* <IconButton color="inherit">
 							<Badge badgeContent={4} color="secondary">
-								<NotificationsIcon sx={{ color: "#2149D9" }} />
+								<NotificationsIcon sx={{ color:"#1d4ed8" }} />
 							</Badge>
-						</IconButton>
+						</IconButton> */}
 						<IconButton
 							sx={{ ml: "20px" }}
 							aria-controls={openMenu ? "basic-menu" : undefined}
@@ -152,7 +166,7 @@ function Dashboard(props) {
 							onClick={handleUserMenuClick}
 						>
 							<Badge color="primary">
-								<Person sx={{ color: "#2149D9" }} />
+								<Person sx={{ color:"#1d4ed8" }} />
 							</Badge>
 						</IconButton>
 						<Menu
@@ -164,12 +178,12 @@ function Dashboard(props) {
 								"aria-labelledby": "basic-button",
 							}}
 						>
-							<MenuItem onClick={handleUserMenuClose}>
+							{/* <MenuItem onClick={handleUserMenuClose} sx={{cursor:"no-drop"}}>
 								Profile
 							</MenuItem>
-							<MenuItem onClick={handleUserMenuClose}>
+							<MenuItem onClick={handleUserMenuClose} sx={{cursor:"no-drop"}}>
 								My account
-							</MenuItem>
+							</MenuItem> */}
 							<MenuItem
 								onClick={() => {
 									props.setLogout();
@@ -194,7 +208,7 @@ function Dashboard(props) {
 						</IconButton>
 					</Toolbar>
 					<Divider />
-					<Sidebar selectedComponent={setSelectedComponent} />
+					<Sidebar setSelectedComponent={setSelectedComponent} selectedComponent={selectedComponent} />
 				</Drawer>
 				<Box
 					component="main"
@@ -210,7 +224,7 @@ function Dashboard(props) {
 				>
 					<Toolbar />
 					<Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-						{selectedComponent === "playground" ? (
+						{/* {selectedComponent === "playground" ? (
 							<Playground />
 						) : selectedComponent === "promt-registry" ? (
 							<PromptRegistry />
@@ -220,7 +234,8 @@ function Dashboard(props) {
 							<History />
 						) : selectedComponent === "settings" ? (
 							<Settings />
-						) : null}
+						) : null} */}
+						<Analytics />
 					</Container>
 				</Box>
 			</Box>

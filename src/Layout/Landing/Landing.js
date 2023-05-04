@@ -482,13 +482,15 @@ function Landing(props) {
 							>
 								Connect With Us
 							</Typography>
-							<Twitter
-								sx={{
-									display: "block",
-									marginX: "auto",
-									color: "#1d4ed8",
-								}}
-							></Twitter>
+							<a href="https://twitter.com/Puddl_LLMOps" target="_blank" rel="noreferrer">
+								<Twitter
+									sx={{
+										display: "block",
+										marginX: "auto",
+										color: "#1d4ed8",
+									}}
+								></Twitter>
+							</a>
 						</Stack>
 					</Grid>
 				</Grid>
