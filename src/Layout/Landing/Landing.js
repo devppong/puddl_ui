@@ -24,7 +24,7 @@ function Landing(props) {
 
 	useEffect(() => {
 		const typed = new Typed(el.current, {
-			strings: ["write", "Test", "Track", "Iterate"],
+			strings: ["Write", "Test", "Track", "Iterate"],
 			typeSpeed: 50,
 			backSpeed: 30,
 			loop: true,
@@ -76,7 +76,8 @@ function Landing(props) {
 					sx={{
 						bgcolor: "#1d4ed8",
 						fontWeight: "700",
-						fontFamily: "Inter",
+						fontFamily:
+							"Inter,'Roboto','Helvetica','Arial',sans-serif",
 					}}
 					onClick={() => {
 						props.setLogin(true);
@@ -120,7 +121,8 @@ function Landing(props) {
 					sx={{
 						bgcolor: "#1d4ed8",
 						fontWeight: "700",
-						fontFamily: "Inter",
+						fontFamily:
+							"Inter,'Roboto','Helvetica','Arial',sans-serif",
 					}}
 					onClick={() => {
 						props.setLogin(true);
@@ -210,7 +212,9 @@ function Landing(props) {
 						<Typography
 							variant="h5"
 							fontWeight={600}
-							fontFamily={"Inter"}
+							fontFamily={
+								"Inter,'Roboto','Helvetica','Arial',sans-serif"
+							}
 							mb={"0.5rem"}
 						>
 							{"Detailed Cost"}
@@ -243,7 +247,9 @@ function Landing(props) {
 						<Typography
 							variant="h5"
 							fontWeight={600}
-							fontFamily={"Inter"}
+							fontFamily={
+								"Inter,'Roboto','Helvetica','Arial',sans-serif"
+							}
 							mb={"0.5rem"}
 						>
 							{"Currency"}
@@ -276,7 +282,9 @@ function Landing(props) {
 						<Typography
 							variant="h5"
 							fontWeight={600}
-							fontFamily={"Inter"}
+							fontFamily={
+								"Inter,'Roboto','Helvetica','Arial',sans-serif"
+							}
 							mb={"0.5rem"}
 						>
 							{"Model Wise"}
@@ -468,8 +476,11 @@ function Landing(props) {
 							>
 								Company
 							</Typography>
-							<Button sx={{ color: "#1d4ed8" }}>Terms</Button>
-							<Button sx={{ color: "#1d4ed8" }}>Privacy</Button>
+							<Button
+								sx={{ color: "#1d4ed8", cursor: "no-drop" }}
+							>
+								Terms
+							</Button>
 						</Stack>
 					</Grid>
 					<Grid item md={3} xs={12}>
@@ -482,7 +493,11 @@ function Landing(props) {
 							>
 								Connect With Us
 							</Typography>
-							<a href="https://twitter.com/Puddl_LLMOps" target="_blank" rel="noreferrer">
+							<a
+								href="https://twitter.com/Puddl_LLMOps"
+								target="_blank"
+								rel="noreferrer"
+							>
 								<Twitter
 									sx={{
 										display: "block",

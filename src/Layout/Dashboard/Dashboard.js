@@ -15,6 +15,7 @@ import {
 	Menu,
 	MenuItem,
 	Stack,
+	Button,
 } from "@mui/material";
 import {
 	Menu as MenuIcon,
@@ -29,6 +30,7 @@ import Settings from "../../Components/Settings/Settings";
 import Analytics from "../../Components/Analytics/Analytics";
 import PromptRegistry from "../../Components/PromptRegistry/PromptRegistry";
 import logo from "./../../assets/puddl-logo.png";
+import Coffee from "./../../assets/buymeacoffee.svg";
 
 const drawerWidth = 240;
 
@@ -81,6 +83,12 @@ const mdTheme = createTheme({
 		primary: {
 			main: "#ffffff",
 		},
+	},
+	typography: {
+		button: {
+			textTransform: "none",
+		},
+		
 	},
 });
 
@@ -153,6 +161,31 @@ function Dashboard(props) {
 								Puddl
 							</Typography>
 						</Stack>
+
+						<a href="https://www.buymeacoffee.com/Puddl" target="_blank" rel="noreferrer" style={{borderRadius:"50%"}}>
+							<Button
+								variant="contained"
+								sx={{backgroundColor:"#1d4ed8",
+								":hover": {
+									bgcolor:"#1d3ecc"
+								}
+							}}
+							>
+								<img src={Coffee} style={{height:'1.8rem'}} alt="" />
+								<Typography
+									px={"0.5rem"}
+									sx={{
+										color: "white",
+										fontFamily:
+											"'Cookie', cursive !important",
+										fontWeight: "normal",
+										fontSize: "1.2rem",
+									}}
+								>
+									Buy me a coffee
+								</Typography>
+							</Button>
+						</a>
 						{/* <IconButton color="inherit">
 							<Badge badgeContent={4} color="secondary">
 								<NotificationsIcon sx={{ color:"#1d4ed8" }} />
@@ -166,7 +199,7 @@ function Dashboard(props) {
 							onClick={handleUserMenuClick}
 						>
 							<Badge color="primary">
-								<Person sx={{ color:"#1d4ed8" }} />
+								<Person sx={{ color: "#1d4ed8" }} />
 							</Badge>
 						</IconButton>
 						<Menu
@@ -208,7 +241,10 @@ function Dashboard(props) {
 						</IconButton>
 					</Toolbar>
 					<Divider />
-					<Sidebar setSelectedComponent={setSelectedComponent} selectedComponent={selectedComponent} />
+					<Sidebar
+						setSelectedComponent={setSelectedComponent}
+						selectedComponent={selectedComponent}
+					/>
 				</Drawer>
 				<Box
 					component="main"
