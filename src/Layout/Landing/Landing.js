@@ -18,7 +18,7 @@ import {
 	Twitter,
 } from "@mui/icons-material";
 import "./Landing.css";
-
+import LandingPageIcon from "./../../assets/landing-page.jpeg";
 function Landing(props) {
 	const el = useRef(null);
 
@@ -173,7 +173,7 @@ function Landing(props) {
 					>
 						<img
 							class="block mx-auto lg:mr-0 pr-6 lg:max-w-[500px]"
-							src="https://d1pnnwteuly8z3.cloudfront.net/images/34042e2f-f9e4-4d41-97b0-9005b9f6513e/582b3fb2-2adf-47f9-b3a2-5ce46e021299.jpeg"
+							src={LandingPageIcon}
 							style={{
 								filter: "drop-shadow(0.5rem 0.5rem 0.25rem rgba(0, 0, 0, 0.075))",
 							}}
