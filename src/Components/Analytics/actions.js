@@ -61,8 +61,11 @@ export const updateFilters = (dispatch,state, filters) => {
 export const getCostMetrics = async(dispatch,state,date_range) => {
     let start_date = moment(date_range[0]).format("YYYY-MM-DD");
     let end_date = moment(date_range[0]).add('1','days').format("YYYY-MM-DD");
-    if(date_range.length>1){
+    if(date_range[1]){
         end_date = moment(date_range[1]).format("YYYY-MM-DD");
+        if(start_date==end_date){
+            end_date = moment(date_range[1]).add('1','days').format("YYYY-MM-DD");
+        }
     }
     let url = `https://api.openai.com/dashboard/billing/usage?start_date=${start_date}&end_date=${end_date}`;
     let token = getToken(state);
@@ -81,8 +84,11 @@ export const getCostMetrics = async(dispatch,state,date_range) => {
 function getCompDateRange(date_range){
     let start_date = moment(date_range[0]).format("YYYY-MM-DD");
     let end_date = moment(date_range[0]).add('1','days').format("YYYY-MM-DD");
-    if(date_range.length>1){
+    if(date_range[1]){
         end_date = moment(date_range[1]).format("YYYY-MM-DD");
+        if(start_date==end_date){
+            end_date = moment(date_range[1]).add('1','days').format("YYYY-MM-DD");
+        }
     }
     let num_of_days = moment(end_date).diff(moment(start_date),'days');
     let comp_start_date = moment(start_date).subtract(num_of_days,'days').format("YYYY-MM-DD");
@@ -94,8 +100,9 @@ function getAllDatesInRange(startDate, endDate) {
     const dates = [];
     let currDate = moment(startDate).startOf('day');
     const lastDate = moment(endDate).startOf('day');
-    while (currDate.add(1, 'days').diff(lastDate) < 0) {
+    while (currDate.diff(lastDate) < 0) {
       dates.push(currDate.clone().format('YYYY-MM-DD'));
+      currDate.add(1, 'days')
     }
     return dates;
 }
@@ -103,8 +110,11 @@ function getAllDatesInRange(startDate, endDate) {
 export const getKPIMetrics = async(dispatch,state,date_range) => {
     let start_date = moment(date_range[0]).format("YYYY-MM-DD");
     let end_date = moment(date_range[0]).add('1','days').format("YYYY-MM-DD");
-    if(date_range.length>1){
+    if(date_range[1]){
         end_date = moment(date_range[1]).format("YYYY-MM-DD");
+        if(start_date==end_date){
+            end_date = moment(date_range[1]).add('1','days').format("YYYY-MM-DD");
+        }
     }
     const datesInRange = getAllDatesInRange(start_date, end_date);
     let promise_array = [];

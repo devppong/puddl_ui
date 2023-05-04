@@ -6,7 +6,11 @@ const getUsageData = (subscription_data,total_usage)=>{
     let soft_limit = soft_limit_usd?soft_limit_usd:0;
     let hard_limit = hard_limit_usd?hard_limit_usd:100;
     let soft_percentage = parseInt(((soft_limit/hard_limit)*100).toFixed(0));
-    let percentage_array = [0,0.8*soft_percentage,0.2*soft_percentage,100-soft_percentage];
+    let limit1 = parseInt(soft_percentage.toFixed(0));
+    let rem_per = 100-soft_percentage;
+    let limit2 = parseInt((0.2*rem_per).toFixed(0));
+    let limit3 = parseInt((0.8*rem_per).toFixed(0));
+    let percentage_array = [limit1,limit2,limit3];
     let percent_value = ((total_usage/hard_limit_usd)*100).toFixed(2);
     return {percentage_array,percent_value,hard_limit};
 }
@@ -55,9 +59,9 @@ export default function Donutchart({ state, dispatch }) {
             </Flex>
             <CategoryBar
                 categoryPercentageValues={percentage_array}
-                showLabels={true}
-                colors={["emerald", "emerald", "orange", "rose"]}
-                percentageValue={60}
+               // showLabels={true}
+                colors={[ "emerald", "orange", "rose"]}
+                percentageValue={getPercentage(hard_limit,total_usage)}
                 className="mt-3"
             />
         </Card>
