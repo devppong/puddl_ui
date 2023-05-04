@@ -17,7 +17,7 @@ import {
 } from "./actions";
 import { StatusOfflineIcon, StatusOnlineIcon } from "@heroicons/react/solid";
 import Linechart from "./charts/Linechart";
-import { Input, Popover } from "antd";
+import { Input } from "antd";
 export default function Analytics() {
 	const initialState = {
 		data: {},
@@ -35,11 +35,6 @@ export default function Analytics() {
 			new Date(new Date().setDate(new Date().getDate() - 30)),
 			new Date(),
 		],
-		datePickerOptions:[
-			{ value: 'tdy', text: 'Today', startDate: new Date() }, 
-			{ value: 'w', text: 'Last 7 days', startDate: new Date(new Date().setDate(new Date().getDate() - 7)),endDate: new Date() },
-		 	{ value: 't', text: 'Last 30 days', startDate: new Date(new Date().setDate(new Date().getDate() - 30)),endDate: new Date()}
-		]
 	};
 
 	const [state, dispatch] = useReducer(reducer, initialState);
@@ -143,7 +138,7 @@ export default function Analytics() {
 					enableDropdown={true}
 					value={state.date_range}
 					onValueChange={handleUpdateDateRange}
-					  options={state.datePickerOptions}
+					//  options={datePickerOptions}
 				/>
 				<MultiSelectBox
 					className="max-w-sm space-y-6 gap-6"
@@ -177,15 +172,13 @@ export default function Analytics() {
 						text="Audio models"
 					/>
 				</MultiSelectBox>
-				<Popover title="Your OpenAI key is stored locally">
-					<Input.Password
-						status={apiKeyStatus}
-						className="max-w-sm"
-						placeholder="OpenAI key(store locally)"
-						onChange={onChangekey}
-						value={apiKey}
-					/>
-				</Popover>
+				<Input.Password
+					status={apiKeyStatus}
+					className="max-w-sm"
+					placeholder="OpenAI key"
+					onChange={onChangekey}
+					value={apiKey}
+				/>
 			</Flex>
 			<Grid numColsLg={3} className="mt-6 gap-6 h-full">
 				<Col numColSpanLg={2}>
