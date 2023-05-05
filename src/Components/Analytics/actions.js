@@ -165,8 +165,8 @@ export const parseSubscriptionData = async (dispatch,subscription_data) => {
     let url = prompt_api_url+`/currencyConversion/${currency}`
     let headers = getPromptAPIHeaders();
     try{
-        let exchangeRate = await axiosGet(url,headers);
-        let conversion = exchangeRate.conversion;
+       // let exchangeRate = await axiosGet(url,headers);
+        let conversion = 0.01;
         soft_limit_usd = soft_limit_usd*conversion;
         hard_limit_usd = hard_limit_usd*conversion;
     }catch(e){
@@ -333,11 +333,11 @@ export const parseChartData = (dispatch,chart_data,comp_chart_data,filters) => {
         for (let j = 0; j < line_items.length; j++) {
             let {name,cost} = line_items[j];
             if(filters.indexOf(name) > -1){
-                obj[name] = cost;
+                obj[name] = cost/100;
                 if(donut_map[name]){
-                    donut_map[name] = donut_map[name] + cost;
+                    donut_map[name] = donut_map[name] + cost/100;
                 }else{
-                    donut_map[name] = cost;
+                    donut_map[name] = cost/100;
                 }
             }
                 
@@ -348,13 +348,14 @@ export const parseChartData = (dispatch,chart_data,comp_chart_data,filters) => {
     for (const [key, value] of Object.entries(donut_map)) {
         let obj = {};
         obj["topic"] = key;
-        obj["cost"] = value;
+        obj["cost"] = value/100;
         donut_chart_data.push(obj);
     }
 
     if(!total_usage|| total_usage<=0) total_usage = 0;
-    else total_usage = total_usage.toFixed(2);
+    else total_usage = (total_usage/100).toFixed(2);
     let comp_total_usage = comp_chart_data&&comp_chart_data.total_usage?comp_chart_data.total_usage:0;
+    comp_total_usage = (comp_total_usage/100).toFixed(2);
     // check percentage change of total usage
     let percentage_change = 0;
     if(comp_total_usage && comp_total_usage>0){

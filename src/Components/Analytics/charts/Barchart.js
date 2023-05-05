@@ -15,8 +15,8 @@ export default function Barchart({ state, dispatch }) {
     let symbol = "$";
     let soft_limit = 0;
     if(subscription_data&&subscription_data.countryInfo){
-        currency = subscription_data.countryInfo.currency;
-        symbol = subscription_data.countryInfo.symbol;
+        // currency = subscription_data.countryInfo.currency;
+        // symbol = subscription_data.countryInfo.symbol;
         soft_limit = subscription_data.countryInfo.soft_limit_usd;
     }
     const dataFormatter = (number) => {
