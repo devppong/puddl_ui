@@ -166,7 +166,7 @@ export const parseSubscriptionData = async (dispatch,subscription_data) => {
     let headers = getPromptAPIHeaders();
     try{
        // let exchangeRate = await axiosGet(url,headers);
-        let conversion = 0.01;
+        let conversion = 1;
         soft_limit_usd = soft_limit_usd*conversion;
         hard_limit_usd = hard_limit_usd*conversion;
     }catch(e){
