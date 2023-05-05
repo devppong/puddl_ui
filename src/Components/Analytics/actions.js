@@ -348,7 +348,7 @@ export const parseChartData = (dispatch,chart_data,comp_chart_data,filters) => {
     for (const [key, value] of Object.entries(donut_map)) {
         let obj = {};
         obj["topic"] = key;
-        obj["cost"] = value/100;
+        obj["cost"] = value;
         donut_chart_data.push(obj);
     }
 
