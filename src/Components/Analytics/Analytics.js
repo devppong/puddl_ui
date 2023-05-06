@@ -111,7 +111,7 @@ export default function Analytics() {
 					justifyContent: "center",
 				}}
 			>
-				<Title style={{ marginLeft: "10px" }}>OpenAI Analytics</Title>
+				<Title style={{ marginLeft: "10px" }}>LLM Analytics</Title>
 				{apiKeyStatus === "success" ? (
 					<Badge
 						className="max-w-sm "
