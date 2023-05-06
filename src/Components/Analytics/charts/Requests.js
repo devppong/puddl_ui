@@ -16,7 +16,7 @@ export default function CompUIReq({ state, dispatch }) {
     return (
         <Card className="max-w-lg h-full">
             <Title>Requests</Title>
-            <Metric>{total_requests}</Metric>
+            <Metric>{total_requests.toLocaleString()}</Metric>
           
             <TabList
                 defaultValue="total"

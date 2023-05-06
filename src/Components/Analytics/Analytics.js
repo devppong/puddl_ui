@@ -102,7 +102,7 @@ export default function Analytics() {
 
 	//let {filters} = state;
 	return (
-		<main className="bg-slate-50 p-6 sm:p-10">
+		<main className="bg-slate-50 p-6 sm:p-10 min-w-full">
 			<Flex
 				style={{
 					display: "flex",
@@ -111,14 +111,14 @@ export default function Analytics() {
 					justifyContent: "center",
 				}}
 			>
-				<Title style={{ marginLeft: "10px" }}>LLM Analytics</Title>
+				<Title>Analytics</Title>
 				{apiKeyStatus === "success" ? (
 					<Badge
 						className="max-w-sm "
 						color="green"
 						style={{ margin: "10px" }}
 					>
-						<div
+						<span
 							style={{
 								display: "flex",
 								alignItems: "center",
@@ -132,7 +132,7 @@ export default function Analytics() {
 								<StatusOnlineIcon />
 							</span>
 							<span className="ml-2">Active</span>
-						</div>
+						</span>
 					</Badge>
 				) : (
 					<Badge
@@ -140,7 +140,7 @@ export default function Analytics() {
 						color="red"
 						style={{ margin: "10px" }}
 					>
-						<div
+						<span
 							style={{
 								display: "flex",
 								alignItems: "center",
@@ -154,10 +154,9 @@ export default function Analytics() {
 								<StatusOfflineIcon />
 							</span>
 							<span className="ml-2">Inactive</span>
-						</div>
+						</span>
 					</Badge>
 				)}
-
 				<DateRangePicker
 					style={{ margin: "10px", maxWidth: "350px" }}
 					className="max-w-sm"
@@ -171,7 +170,7 @@ export default function Analytics() {
 					className="max-w-sm space-y-6 gap-6"
 					onValueChange={handleUpdateFilters}
 					value={state.filters}
-					style={{ margin: "10px", width: "230px" }}
+					style={{ margin: "10px", width: "150px" }}
 					placeholder="Model Types"
 				>
 					<MultiSelectBoxItem
@@ -200,15 +199,18 @@ export default function Analytics() {
 						text="Audio models"
 					/>
 				</MultiSelectBox>
-				<Popover title="Your OpenAI key is stored locally">
+				<Popover title="Your OpenAI key is stored locally" className="grow">
 					<Input.Password
 						status={apiKeyStatus}
 						className="max-w-sm"
 						placeholder="OpenAI key(stored locally)"
 						onChange={onChangekey}
 						value={apiKey}
+						size="large"
+						style={{width:'320px'}}
 					/>
 				</Popover>
+				
 			</Flex>
 			<Grid numColsLg={3} className="mt-6 gap-6 h-full">
 				<Col numColSpanLg={2}>

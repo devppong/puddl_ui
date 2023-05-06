@@ -278,7 +278,7 @@ export const parseKPIData = (dispatch,kpi_data) => {
         generated_tokens_data.push({name:key,value:value});
     }
     for (const [key, value] of Object.entries(hourly_requests_map)) {
-        hourly_requests_data.push({name:key,Requests:value});
+        hourly_requests_data.push({name:parseInt(key),Requests:value});
     }
     let avg_daily_requests = kpi_data.length && kpi_data.length>0 ? (total_requests/kpi_data.length).toFixed(0):0;
     dispatch({

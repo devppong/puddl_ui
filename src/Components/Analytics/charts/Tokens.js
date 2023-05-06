@@ -89,7 +89,7 @@ export default function CompUITok({ state, dispatch }) {
 	return (
 		<Card className="max-w-lg h-full">
 			<Title>Tokens</Title>
-			<Metric>{getTotalMetrics(showCard, state)}</Metric>
+			<Metric>{getTotalMetrics(showCard, state).toLocaleString()}</Metric>
 			<>
 				<TabList
 					defaultValue="total"
