@@ -35,11 +35,25 @@ export default function Analytics() {
 			new Date(new Date().setDate(new Date().getDate() - 30)),
 			new Date(),
 		],
-		datePickerOptions:[
-			{ value: 'tdy', text: 'Today', startDate: new Date() }, 
-			{ value: 'w', text: 'Last 7 days', startDate: new Date(new Date().setDate(new Date().getDate() - 7)),endDate: new Date() },
-		 	{ value: 't', text: 'Last 30 days', startDate: new Date(new Date().setDate(new Date().getDate() - 30)),endDate: new Date()}
-		]
+		datePickerOptions: [
+			{ value: "tdy", text: "Today", startDate: new Date() },
+			{
+				value: "w",
+				text: "Last 7 days",
+				startDate: new Date(
+					new Date().setDate(new Date().getDate() - 7)
+				),
+				endDate: new Date(),
+			},
+			{
+				value: "t",
+				text: "Last 30 days",
+				startDate: new Date(
+					new Date().setDate(new Date().getDate() - 30)
+				),
+				endDate: new Date(),
+			},
+		],
 	};
 
 	const [state, dispatch] = useReducer(reducer, initialState);
@@ -89,8 +103,15 @@ export default function Analytics() {
 	//let {filters} = state;
 	return (
 		<main className="bg-slate-50 p-6 sm:p-10">
-			<Flex style={{ display: "flex", alignItems: "center" }}>
-				<Title style={{ marginLeft: "10px" }}>Puddl Analytics</Title>
+			<Flex
+				style={{
+					display: "flex",
+					alignItems: "center",
+					flexWrap: "wrap",
+					justifyContent: "center",
+				}}
+			>
+				<Title style={{ marginLeft: "10px" }}>OpenAI Analytics</Title>
 				{apiKeyStatus === "success" ? (
 					<Badge
 						className="max-w-sm "
@@ -138,18 +159,20 @@ export default function Analytics() {
 				)}
 
 				<DateRangePicker
-					style={{ margin: "10px", width: "350px" }}
+					style={{ margin: "10px", maxWidth: "350px" }}
 					className="max-w-sm"
 					enableDropdown={true}
 					value={state.date_range}
 					onValueChange={handleUpdateDateRange}
-					  options={state.datePickerOptions}
+					options={state.datePickerOptions}
+					dropdownPlaceholder="Timeline"
 				/>
 				<MultiSelectBox
 					className="max-w-sm space-y-6 gap-6"
 					onValueChange={handleUpdateFilters}
 					value={state.filters}
 					style={{ margin: "10px", width: "230px" }}
+					placeholder="Model Types"
 				>
 					<MultiSelectBoxItem
 						value="Instruct models"
@@ -181,7 +204,7 @@ export default function Analytics() {
 					<Input.Password
 						status={apiKeyStatus}
 						className="max-w-sm"
-						placeholder="OpenAI key(store locally)"
+						placeholder="OpenAI key(stored locally)"
 						onChange={onChangekey}
 						value={apiKey}
 					/>
@@ -195,6 +218,7 @@ export default function Analytics() {
 					<Linechart state={state} dispatch={dispatch} />
 				</Col>
 			</Grid>
+
 			{/* {<Barchart state={state} dispatch={dispatch} />} */}
 			<Grid numColsLg={3} className="mt-6 gap-6">
 				<Col numColSpanLg={1}>
