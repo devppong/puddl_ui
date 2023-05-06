@@ -102,7 +102,7 @@ export default function Analytics() {
 
 	//let {filters} = state;
 	return (
-		<main className="bg-slate-50 p-6 sm:p-10 min-w-full">
+		<main className="bg-slate-50 p-6 sm:p-10 w-min-full">
 			<Flex
 				style={{
 					display: "flex",

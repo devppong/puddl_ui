@@ -170,7 +170,7 @@ function Dashboard(props) {
 								variant="h5"
 								color="#1d4ed8"
 								noWrap
-								fontSize={{sm:"1.5rem",xs:"1.2rem"}}
+								fontSize={{ sm: "1.5rem", xs: "1.2rem" }}
 								fontWeight={"bold"}
 								marginX={"0.75rem"}
 							>
@@ -199,7 +199,7 @@ function Dashboard(props) {
 									alt=""
 								/>
 								<Typography
-									px={{sm:"0.5rem",xs:"0.35rem"}}
+									px={{ sm: "0.5rem", xs: "0.35rem" }}
 									sx={{
 										color: "white",
 										fontFamily:
@@ -288,7 +288,7 @@ function Dashboard(props) {
 					}}
 				>
 					<Toolbar />
-					<Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+					<Container maxWidth="100%" sx={{ mt: 4, mb: 4 }}>
 						{/* {selectedComponent === "playground" ? (
 							<Playground />
 						) : selectedComponent === "promt-registry" ? (
@@ -300,7 +300,9 @@ function Dashboard(props) {
 						) : selectedComponent === "settings" ? (
 							<Settings />
 						) : null} */}
-						<Analytics />
+						<Analytics
+							style={{ margin: "auto", display: "block" }}
+						/>
 					</Container>
 				</Box>
 			</Box>
