@@ -112,7 +112,7 @@ export default function Sidebar(props) {
 						</ListItemIcon>
 						<ListItemText primary="Analytics" />
 					</ListItemButton>
-					<ListItemButton
+					{/* <ListItemButton
 						// onClick={() => {
 						// 	props.selectedComponent("settings");
 						// }}
@@ -125,7 +125,7 @@ export default function Sidebar(props) {
 							<Settings />
 						</ListItemIcon>
 						<ListItemText primary="Settings" />
-					</ListItemButton>
+					</ListItemButton> */}
 				</React.Fragment>
 				<Divider sx={{ my: 1 }} />
 				<Snackbar

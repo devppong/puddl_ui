@@ -88,11 +88,30 @@ const mdTheme = createTheme({
 		button: {
 			textTransform: "none",
 		},
-		
 	},
 });
 
 function Dashboard(props) {
+	const [matchesXs, setMatchesXs] = useState(true);
+
+	useEffect(() => {
+		const mediaQuery = window.matchMedia("(max-width: 992px)");
+		setMatchesXs(mediaQuery.matches);
+
+		const handleChange = (event) => {
+			setMatchesXs(event.matches);
+		};
+		mediaQuery.addEventListener("change", handleChange);
+
+		return () => {
+			mediaQuery.removeEventListener("change", handleChange);
+		};
+	}, []);
+
+	useEffect(() => {
+		console.log(matchesXs);
+	}, [matchesXs]);
+
 	const [open, setOpen] = React.useState(true);
 	const toggleDrawer = () => {
 		setOpen(!open);
@@ -122,7 +141,7 @@ function Dashboard(props) {
 		<ThemeProvider theme={mdTheme}>
 			<Box sx={{ display: "flex" }}>
 				<CssBaseline />
-				<AppBar position="absolute" open={open}>
+				<AppBar position="absolute" open={open && !matchesXs}>
 					<Toolbar
 						sx={{
 							pr: "24px", // keep right padding when drawer closed
@@ -136,6 +155,7 @@ function Dashboard(props) {
 							sx={{
 								marginRight: "36px",
 								...(open && { display: "none" }),
+								display: { xs: "none", md: "inline-block" },
 							}}
 						>
 							<MenuIcon />
@@ -154,7 +174,7 @@ function Dashboard(props) {
 								variant="h5"
 								color="#1d4ed8"
 								noWrap
-								fontSize={"1.5rem"}
+								fontSize={{sm:"1.5rem",xs:"1.2rem"}}
 								fontWeight={"bold"}
 								marginX={"0.75rem"}
 							>
@@ -162,24 +182,37 @@ function Dashboard(props) {
 							</Typography>
 						</Stack>
 
-						<a href="https://www.buymeacoffee.com/Puddl" target="_blank" rel="noreferrer" style={{borderRadius:"50%"}}>
+						<a
+							href="https://www.buymeacoffee.com/Puddl"
+							target="_blank"
+							rel="noreferrer"
+							style={{ borderRadius: "50%" }}
+						>
 							<Button
 								variant="contained"
-								sx={{backgroundColor:"#1d4ed8",
-								":hover": {
-									bgcolor:"#1d3ecc"
-								}
-							}}
+								sx={{
+									backgroundColor: "#1d4ed8",
+									":hover": {
+										bgcolor: "#1d3ecc",
+									},
+								}}
 							>
-								<img src={Coffee} style={{height:'1.8rem'}} alt="" />
+								<img
+									src={Coffee}
+									style={{ height: "1.8rem" }}
+									alt=""
+								/>
 								<Typography
-									px={"0.5rem"}
+									px={{sm:"0.5rem",xs:"0.35rem"}}
 									sx={{
 										color: "white",
 										fontFamily:
 											"'Cookie', cursive !important",
 										fontWeight: "normal",
-										fontSize: "1.2rem",
+										fontSize: {
+											xs: "0.8rem",
+											sm: "1.2rem",
+										},
 									}}
 								>
 									Buy me a coffee
@@ -227,7 +260,7 @@ function Dashboard(props) {
 						</Menu>
 					</Toolbar>
 				</AppBar>
-				<Drawer variant="permanent" open={open}>
+				<Drawer variant="permanent" open={open && !matchesXs}>
 					<Toolbar
 						sx={{
 							display: "flex",
