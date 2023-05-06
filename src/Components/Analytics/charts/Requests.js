@@ -10,6 +10,9 @@ export default function CompUIReq({ state, dispatch }) {
     let { requests_data } = state;
     let total_requests = requests_data && requests_data.total_requests ? requests_data.total_requests : 0;
     let data = requests_data && requests_data.data ? requests_data.data : [];
+    data.sort(function (a, b) {
+        return b['value'] - a['value'];
+    });
     return (
         <Card className="max-w-lg h-full">
             <Title>Requests</Title>
