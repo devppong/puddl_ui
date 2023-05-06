@@ -14,35 +14,29 @@ import {
 	ListAltOutlined,
 	Settings,
 } from "@mui/icons-material";
-import { Button, IconButton, Snackbar } from "@mui/material";
+import {
+	Button,
+	IconButton,
+	Snackbar,
+	Popover,
+	Typography,
+} from "@mui/material";
 
 export default function Sidebar(props) {
-	const [open, setOpen] = React.useState(false);
+	// const [open, setOpen] = React.useState(false);
 
-	const handleClick = () => {
-		setOpen(true);
+	const [anchorEl, setAnchorEl] = React.useState(null);
+
+	const handlePopoverOpen = (event) => {
+		setAnchorEl(event.currentTarget);
 	};
 
-	const handleClose = (event, reason) => {
-		if (reason === "clickaway") {
-			return;
-		}
-
-		setOpen(false);
+	const handlePopoverClose = () => {
+		setAnchorEl(null);
 	};
 
-	const action = (
-		<React.Fragment>
-			<IconButton
-				size="small"
-				aria-label="close"
-				color="inherit"
-				onClick={handleClose}
-			>
-				<Close fontSize="small" />
-			</IconButton>
-		</React.Fragment>
-	);
+	const open = Boolean(anchorEl);
+
 	return (
 		<>
 			<List component="nav">
@@ -51,10 +45,13 @@ export default function Sidebar(props) {
 						// onClick={() => {
 						// 	props.selectedComponent("playground");
 						// }}
-						onClick={handleClick}
 						sx={{
 							cursor: "no-drop",
 						}}
+						aria-owns={open ? "mouse-over-popover" : undefined}
+						aria-haspopup="true"
+						onMouseEnter={handlePopoverOpen}
+						onMouseLeave={handlePopoverClose}
 					>
 						<ListItemIcon>
 							<AttractionsOutlined />
@@ -65,10 +62,13 @@ export default function Sidebar(props) {
 						// onClick={() => {
 						// 	props.selectedComponent("promt-registry");
 						// }}
-						onClick={handleClick}
 						sx={{
 							cursor: "no-drop",
 						}}
+						aria-owns={open ? "mouse-over-popover" : undefined}
+						aria-haspopup="true"
+						onMouseEnter={handlePopoverOpen}
+						onMouseLeave={handlePopoverClose}
 					>
 						<ListItemIcon>
 							<ListAltOutlined />
@@ -79,10 +79,13 @@ export default function Sidebar(props) {
 						// onClick={() => {
 						// 	props.selectedComponent("history");
 						// }}
-						onClick={handleClick}
 						sx={{
 							cursor: "no-drop",
 						}}
+						aria-owns={open ? "mouse-over-popover" : undefined}
+						aria-haspopup="true"
+						onMouseEnter={handlePopoverOpen}
+						onMouseLeave={handlePopoverClose}
 					>
 						<ListItemIcon>
 							<History />
@@ -128,13 +131,33 @@ export default function Sidebar(props) {
 					</ListItemButton> */}
 				</React.Fragment>
 				<Divider sx={{ my: 1 }} />
-				<Snackbar
+				<Popover
+					id="mouse-over-popover"
+					sx={{
+						pointerEvents: "none",
+					}}
+					open={open}
+					anchorEl={anchorEl}
+					anchorOrigin={{
+						vertical: "center",
+						horizontal: "right",
+					}}
+					transformOrigin={{
+						vertical: "center",
+						horizontal: "left",
+					}}
+					onClose={handlePopoverClose}
+					disableRestoreFocus
+				>
+					<Typography sx={{ p: 1, color:"#1d4ed8" }}>Coming Soon!</Typography>
+				</Popover>
+				{/* <Snackbar
 					open={open}
 					autoHideDuration={3000}
 					onClose={handleClose}
 					message="Coming Soon!"
 					action={action}
-				/>
+				/> */}
 				{/* {secondaryListItems} */}
 			</List>
 		</>

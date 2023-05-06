@@ -147,6 +147,7 @@ function Landing(props) {
 							fontSize={"3.5rem"}
 							fontWeight={600}
 							textAlign={"left"}
+							px={{xs:"1rem",md:"0rem"}}
 						>
 							{"Get your "}
 							{/* class="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary capitalize" */}
@@ -326,6 +327,7 @@ function Landing(props) {
 								fontWeight={600}
 								textAlign={"left"}
 								mb={"1.5rem"}
+								px={{xs:"1rem",md:"0rem"}}
 							>
 								<span
 									style={{
@@ -339,7 +341,7 @@ function Landing(props) {
 								</span>
 								{" are on the way."}
 							</Typography>
-							<Typography variant="body1">
+							<Typography variant="body1" px={{xs:"1.5rem",md:"0rem"}}>
 								Our LLM Ops tool will be launched soon. So, keep
 								an eye out for that.
 							</Typography>

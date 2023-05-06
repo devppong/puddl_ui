@@ -95,7 +95,7 @@ function Dashboard(props) {
 	const [matchesXs, setMatchesXs] = useState(true);
 
 	useEffect(() => {
-		const mediaQuery = window.matchMedia("(max-width: 992px)");
+		const mediaQuery = window.matchMedia("(max-width: 900px)");
 		setMatchesXs(mediaQuery.matches);
 
 		const handleChange = (event) => {
@@ -107,10 +107,6 @@ function Dashboard(props) {
 			mediaQuery.removeEventListener("change", handleChange);
 		};
 	}, []);
-
-	useEffect(() => {
-		console.log(matchesXs);
-	}, [matchesXs]);
 
 	const [open, setOpen] = React.useState(true);
 	const toggleDrawer = () => {

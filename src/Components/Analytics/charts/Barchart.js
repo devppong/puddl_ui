@@ -33,7 +33,7 @@ export default function Barchart({ state, dispatch }) {
     }
     return (
         <Card className="h-full">
-            <Title>Daily Usage {"("+currency+")"}</Title>
+            <Title>Usage {"("+currency+")"}</Title>
             <Flex className="max-w-sm">
                 <Metric>{symbol} {total_usage}</Metric>
                 <BadgeDelta deltaType={getDeltaType(total_usage_percentage_change)}>{total_usage_percentage_change}</BadgeDelta>
