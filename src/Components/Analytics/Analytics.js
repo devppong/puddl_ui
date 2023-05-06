@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Col, Grid, Title, Flex } from "@tremor/react";
+import { Col, Grid, Title, Flex, Metric } from "@tremor/react";
 import { Badge } from "@tremor/react";
 import { MultiSelectBox, MultiSelectBoxItem } from "@tremor/react";
 import { DateRangePicker } from "@tremor/react";
@@ -111,7 +111,7 @@ export default function Analytics() {
 					justifyContent: "center",
 				}}
 			>
-				<Title>Analytics</Title>
+				<Metric>Analytics</Metric>
 				{apiKeyStatus === "success" ? (
 					<Badge
 						className="max-w-sm "
