@@ -96,7 +96,7 @@ function Landing(props) {
 						mb: "1.5rem",
 					}}
 				>
-					LLM Ops Simplified.
+					Track your OpenAI costs for free.
 					<span style={{ display: "block", color: "#1d4ed8" }}>
 						<span ref={el} />
 						<span className="typed-cursor" />
@@ -110,9 +110,9 @@ function Landing(props) {
 						mb: "2.5rem",
 					}}
 				>
-					Get visibility into your OpenAI costs for{" "}
+					Get insights to reduce costs in {" "}
 					<b style={{ color: "#1d4ed8", fontWeight: "bolder" }}>
-						Free!
+					seconds!
 					</b>
 				</Typography>
 				<Button
@@ -444,7 +444,7 @@ function Landing(props) {
 								Puddl
 							</Typography>
 							<Typography align="center">
-								LLM Ops simplified.
+								Track your OpenAI costs for free.
 							</Typography>
 						</Stack>
 					</Grid>
