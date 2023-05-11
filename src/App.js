@@ -45,7 +45,7 @@ function App() {
 			}
 			fetchEmail().then((res) => {
 				try {
-					fetch("http://puddlapi.puddl.io/prompt/saveEmail", {
+					fetch("https://puddlapi.puddl.io/prompt/saveEmail", {
 						method: "POST",
 						headers: {
 							"Content-Type": "application/json",
