@@ -41,7 +41,7 @@ export const updateApiKey = async(dispatch,state, key) => {
         payload: key
     });
     state.api_key = key;
-    getSubscriptionData(dispatch,state,key);
+   await getSubscriptionData(dispatch,state,key);
     updateDateRange(dispatch, state, state.date_range);
 }
 
@@ -158,7 +158,7 @@ export const getSubscriptionData = async(dispatch,state) => {
     let url = `https://api.openai.com/dashboard/billing/subscription`;
     let subscription_data = await axiosGet(url,headers);
     if(!subscription_data) return;
-    parseSubscriptionData(dispatch,subscription_data);
+    await parseSubscriptionData(dispatch,subscription_data);
 }
 
 export const parseSubscriptionData = async (dispatch,subscription_data) => {
