@@ -59,14 +59,17 @@ function App() {
 		}
 	}, [accessToken]);
 
-	const login = useGoogleLogin({
-		onSuccess: (tokenResponse) => {
-			// console.log(tokenResponse);
-			setAccessToken(tokenResponse["access_token"]);
-			setIsLoggedIn(true);
-			localStorage.setItem("isLoggedIn", "true");
-		},
-	});
+	const login =
+		useGoogleLogin({
+			select_account: true,
+			onSuccess: (tokenResponse) => {
+				// console.log(tokenResponse);
+				setAccessToken(tokenResponse["access_token"]);
+				setIsLoggedIn(true);
+				localStorage.setItem("isLoggedIn", "true");
+			},
+		});
+
 
 	const logout = () => {
 		googleLogout();
@@ -77,7 +80,7 @@ function App() {
 	return isLoggedIn ? (
 		<Dashboard setLogout={logout} />
 	) : (
-		<Landing setLogin={login} />
+		<Landing setLogin={()=>login()} />
 	);
 }
 
