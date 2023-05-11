@@ -22,11 +22,16 @@ const getPromptAPIHeaders = () => {
 }
 
 const axiosGet = async (url,headers) => {
-    const response = await axios.get(url, headers);
-    if(response.status === 200)
-        return response.data;
-    else
+    try{
+        const response = await axios.get(url, headers);
+        if(response.status === 200)
+            return response.data;
+        else
+            return null;
+    }catch(error){
         return null;
+    }
+
 }
 
 export const updateApiKey = async(dispatch,state, key) => {
@@ -54,8 +59,9 @@ export const updateDateRange= async(dispatch,state, date_range) => {
   
 export const updateFilters = (dispatch,state, filters) => {
     dispatch({ type: 'UPDATE_FILTERS', payload: filters ,fieldName: 'filters'});
-    let {chart_data,comp_chart_data} = state;
-    parseChartData(dispatch,chart_data,comp_chart_data,filters);
+    let {chart_data,comp_chart_data,subscription_data} = state;
+    let {conversion} = subscription_data;
+    parseChartData(dispatch,chart_data,comp_chart_data,filters,conversion);
 }
 
 export const getCostMetrics = async(dispatch,state,date_range) => {
@@ -77,8 +83,9 @@ export const getCostMetrics = async(dispatch,state,date_range) => {
     if(!chart_data) return;
     dispatch({ type: 'UPDATE_CHART_DATA', payload: chart_data ,fieldName: 'chart_data'});
     dispatch({ type: 'UPDATE_COMP_CHART_DATA', payload: comp_chart_data ,fieldName: 'comp_chart_data'});
-    let {filters} = state;
-    parseChartData(dispatch,chart_data,comp_chart_data,filters);
+    let {filters,subscription_data} = state;
+    let {conversion} = subscription_data;
+    parseChartData(dispatch,chart_data,comp_chart_data,filters,conversion);
 }
 
 function getCompDateRange(date_range){
@@ -157,6 +164,7 @@ export const getSubscriptionData = async(dispatch,state) => {
 export const parseSubscriptionData = async (dispatch,subscription_data) => {
     let {soft_limit_usd,hard_limit_usd,billing_address} = subscription_data;
     let countryName = 'US';
+    let conversion = 1;
     if(billing_address&&billing_address.country){
         countryName = billing_address.country;
     }
@@ -165,8 +173,8 @@ export const parseSubscriptionData = async (dispatch,subscription_data) => {
     let url = prompt_api_url+`/currencyConversion/${currency}`
     let headers = getPromptAPIHeaders();
     try{
-       // let exchangeRate = await axiosGet(url,headers);
-        let conversion = 1;
+        let exchangeRate = await axiosGet(url,headers);
+        conversion = exchangeRate.conversion;
         soft_limit_usd = soft_limit_usd*conversion;
         hard_limit_usd = hard_limit_usd*conversion;
     }catch(e){
@@ -180,8 +188,9 @@ export const parseSubscriptionData = async (dispatch,subscription_data) => {
         payload: {
             soft_limit_usd,
             hard_limit_usd,
-            countryInfo
-           // countryCurrency
+            countryInfo,
+            conversion
+         //   countryCurrency
         }
     });
 
@@ -318,12 +327,13 @@ export const parseKPIData = (dispatch,kpi_data) => {
     });
 }
 
-export const parseChartData = (dispatch,chart_data,comp_chart_data,filters) => {
+export const parseChartData = (dispatch,chart_data,comp_chart_data,filters,conversion) => {
     let daily_costs = chart_data&& chart_data.daily_costs?chart_data.daily_costs:[];
     let total_usage = chart_data&&chart_data.total_usage?chart_data.total_usage:0;
     let bar_chart_data = [];
     let donut_chart_data = [];
     let donut_map = {};
+    let exchangeRate = conversion?conversion:1;
     for (let i = 0; i < daily_costs.length; i++) {
         let obj = {};
         let {timestamp,line_items} = daily_costs[i];
@@ -333,11 +343,11 @@ export const parseChartData = (dispatch,chart_data,comp_chart_data,filters) => {
         for (let j = 0; j < line_items.length; j++) {
             let {name,cost} = line_items[j];
             if(filters.indexOf(name) > -1){
-                obj[name] = cost/100;
+                obj[name] = (cost/100)*exchangeRate;
                 if(donut_map[name]){
-                    donut_map[name] = donut_map[name] + cost/100;
+                    donut_map[name] = donut_map[name] + (cost/100)*exchangeRate;
                 }else{
-                    donut_map[name] = cost/100;
+                    donut_map[name] = (cost/100)*exchangeRate;
                 }
             }
                 
@@ -353,9 +363,9 @@ export const parseChartData = (dispatch,chart_data,comp_chart_data,filters) => {
     }
 
     if(!total_usage|| total_usage<=0) total_usage = 0;
-    else total_usage = (total_usage/100).toFixed(2);
+    else total_usage = ((total_usage/100)*exchangeRate).toFixed(2);
     let comp_total_usage = comp_chart_data&&comp_chart_data.total_usage?comp_chart_data.total_usage:0;
-    comp_total_usage = (comp_total_usage/100).toFixed(2);
+    comp_total_usage = ((comp_total_usage/100)*exchangeRate).toFixed(2);
     // check percentage change of total usage
     let percentage_change = 0;
     if(comp_total_usage && comp_total_usage>0){

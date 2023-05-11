@@ -15,8 +15,8 @@ export default function Barchart({ state, dispatch }) {
     let symbol = "$";
     let soft_limit = 0;
     if(subscription_data&&subscription_data.countryInfo){
-        // currency = subscription_data.countryInfo.currency;
-        // symbol = subscription_data.countryInfo.symbol;
+        currency = subscription_data.countryInfo.currency;
+        symbol = subscription_data.countryInfo.symbol;
         soft_limit = subscription_data.countryInfo.soft_limit_usd;
     }
     const dataFormatter = (number) => {
@@ -36,7 +36,7 @@ export default function Barchart({ state, dispatch }) {
             <Title>Usage {"("+currency+")"}</Title>
             <Flex className="max-w-sm">
                 <Metric>{symbol} {total_usage}</Metric>
-                <BadgeDelta deltaType={getDeltaType(total_usage_percentage_change)}>{total_usage_percentage_change}</BadgeDelta>
+                <BadgeDelta deltaType={getDeltaType(total_usage_percentage_change)}>{(total_usage_percentage_change?total_usage_percentage_change:0)+"%"}</BadgeDelta>
             </Flex>
             {
                 (total_usage>soft_limit)&&(

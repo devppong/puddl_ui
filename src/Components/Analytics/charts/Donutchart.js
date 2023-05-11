@@ -28,7 +28,7 @@ export default function Donutchart({ state, dispatch }) {
     let symbol = "$";
     let soft_limit = 0;
     if(subscription_data&&subscription_data.countryInfo){
-      //  symbol = subscription_data.countryInfo.symbol;
+        symbol = subscription_data.countryInfo.symbol;
         soft_limit = subscription_data.soft_limit_usd;
     }
     const valueFormatter = (number) =>

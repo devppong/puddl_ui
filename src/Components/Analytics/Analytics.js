@@ -74,7 +74,7 @@ export default function Analytics() {
 		try {
 			isApiKeyValid = await validateApiKey(key);
 		} catch (e) {
-			console.log(e);
+			//console.log(e);
 		}
 
 		if (isApiKeyValid) {
