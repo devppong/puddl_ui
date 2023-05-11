@@ -42,7 +42,7 @@ export const updateApiKey = async(dispatch,state, key) => {
     });
     state.api_key = key;
    await getSubscriptionData(dispatch,state,key);
-    updateDateRange(dispatch, state, state.date_range);
+   await updateDateRange(dispatch, state, state.date_range);
 }
 
 export const updateDateRange= async(dispatch,state, date_range) => {
@@ -158,10 +158,10 @@ export const getSubscriptionData = async(dispatch,state) => {
     let url = `https://api.openai.com/dashboard/billing/subscription`;
     let subscription_data = await axiosGet(url,headers);
     if(!subscription_data) return;
-    await parseSubscriptionData(dispatch,subscription_data);
+    await parseSubscriptionData(dispatch,state,subscription_data);
 }
 
-export const parseSubscriptionData = async (dispatch,subscription_data) => {
+export const parseSubscriptionData = async (dispatch,state,subscription_data) => {
     let {soft_limit_usd,hard_limit_usd,billing_address} = subscription_data;
     let countryName = 'US';
     let conversion = 1;
@@ -180,9 +180,14 @@ export const parseSubscriptionData = async (dispatch,subscription_data) => {
     }catch(e){
         console.log(e);
     }
-    
-
-    dispatch({
+    let updated_subscription_data = {
+        soft_limit_usd,
+        hard_limit_usd,
+        countryInfo,
+        conversion
+    }
+    state.subscription_data = updated_subscription_data;
+    await dispatch({
         type: 'UPDATE_SUBSCRIPTION_DATA',
         fieldName: 'subscription_data',
         payload: {
