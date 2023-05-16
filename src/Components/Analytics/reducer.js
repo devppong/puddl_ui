@@ -18,6 +18,12 @@ export default function reducer(state, action) {
 				[action.fieldName]: action.payload,
 			};
 		}
+		case "UPDATE_KPI_DATA": {
+			return {
+				...state,
+				[action.fieldName]: action.payload,
+			};
+		}
 		case "UPDATE_TOTAL_USAGE": {
 			return {
 				...state,

@@ -80,14 +80,20 @@ export const updateFilters = (dispatch, state, filters) => {
 	parseChartData(dispatch, chart_data, comp_chart_data, filters, conversion);
 };
 
-export const updateSelectedUser = (dispatch, state, value) => {
+export const updateSelectedUser = (dispatch, state, selectedUser) => {
 	dispatch({
 		type: "UPDATE_SELECTED_USER",
-		payload: value,
+		payload: selectedUser,
 		fieldName: "seletedUser",
 	});
-	let { user_level_data } = state;
-	parseUserLevelData(dispatch, user_level_data, value);
+	if (selectedUser === "All Users") {
+		let { kpi_data } = state;
+		console.log("kpi_data:", kpi_data);
+		// parseKPIData(dispatch, kpi_data);
+	} else {
+		let { user_level_data } = state;
+		parseUserLevelData(dispatch, user_level_data, selectedUser);
+	}
 };
 
 export const getCostMetrics = async (dispatch, state, date_range) => {
@@ -219,7 +225,6 @@ export const getUserLevelMetrics = async (dispatch, state, date_range) => {
 };
 
 export const getKPIMetrics = async (dispatch, state, date_range) => {
-	console.log("kpi metrics");
 	let start_date = moment(date_range[0]).format("YYYY-MM-DD");
 	let end_date = moment(date_range[0]).add("1", "days").format("YYYY-MM-DD");
 	if (date_range[1]) {
@@ -240,6 +245,11 @@ export const getKPIMetrics = async (dispatch, state, date_range) => {
 	});
 	let kpi_data = await Promise.all(promise_array);
 	if (!kpi_data) return;
+	// dispatch({
+	// 	type: "UPDATE_KPI_DATA",
+	// 	payload: kpi_data,
+	// 	fieldName: "kpi_data",
+	// });
 	parseKPIData(dispatch, kpi_data);
 };
 
@@ -414,42 +424,46 @@ export const parseUserLevelData = (
 					}
 				}
 
-				indi_total_requests += n_requests;
+				if (seletedUser === "All Users") {
+					indi_total_requests += n_requests;
 
-				if (indi_requests_map[indi_user[0].split("|")[1]]) {
-					indi_requests_map[indi_user[0].split("|")[1]] += n_requests;
-				} else {
-					indi_requests_map[indi_user[0].split("|")[1]] = n_requests;
-				}
+					if (indi_requests_map[indi_user[0].split("|")[1]]) {
+						indi_requests_map[indi_user[0].split("|")[1]] +=
+							n_requests;
+					} else {
+						indi_requests_map[indi_user[0].split("|")[1]] =
+							n_requests;
+					}
 
-				indi_total_tokens +=
-					n_context_tokens_total + n_generated_tokens_total;
-				if (indi_tokens_map[indi_user[0].split("|")[1]]) {
-					indi_tokens_map[indi_user[0].split("|")[1]] =
-						indi_tokens_map[indi_user[0].split("|")[1]] +
-						n_generated_tokens_total +
-						n_context_tokens_total;
-				} else {
-					indi_tokens_map[indi_user[0].split("|")[1]] =
-						n_generated_tokens_total + n_context_tokens_total;
-				}
+					indi_total_tokens +=
+						n_context_tokens_total + n_generated_tokens_total;
+					if (indi_tokens_map[indi_user[0].split("|")[1]]) {
+						indi_tokens_map[indi_user[0].split("|")[1]] =
+							indi_tokens_map[indi_user[0].split("|")[1]] +
+							n_generated_tokens_total +
+							n_context_tokens_total;
+					} else {
+						indi_tokens_map[indi_user[0].split("|")[1]] =
+							n_generated_tokens_total + n_context_tokens_total;
+					}
 
-				indi_total_context_tokens += n_context_tokens_total;
-				if (indi_context_tokens_map[indi_user[0].split("|")[1]]) {
-					indi_context_tokens_map[indi_user[0].split("|")[1]] +=
-						n_context_tokens_total;
-				} else {
-					indi_context_tokens_map[indi_user[0].split("|")[1]] =
-						n_context_tokens_total;
-				}
+					indi_total_context_tokens += n_context_tokens_total;
+					if (indi_context_tokens_map[indi_user[0].split("|")[1]]) {
+						indi_context_tokens_map[indi_user[0].split("|")[1]] +=
+							n_context_tokens_total;
+					} else {
+						indi_context_tokens_map[indi_user[0].split("|")[1]] =
+							n_context_tokens_total;
+					}
 
-				indi_total_generated_tokens += n_generated_tokens_total;
-				if (indi_generated_tokens_map[indi_user[0].split("|")[1]]) {
-					indi_generated_tokens_map[indi_user[0].split("|")[1]] +=
-						n_generated_tokens_total;
-				} else {
-					indi_generated_tokens_map[indi_user[0].split("|")[1]] =
-						n_generated_tokens_total;
+					indi_total_generated_tokens += n_generated_tokens_total;
+					if (indi_generated_tokens_map[indi_user[0].split("|")[1]]) {
+						indi_generated_tokens_map[indi_user[0].split("|")[1]] +=
+							n_generated_tokens_total;
+					} else {
+						indi_generated_tokens_map[indi_user[0].split("|")[1]] =
+							n_generated_tokens_total;
+					}
 				}
 			}
 		}
@@ -545,38 +559,43 @@ export const parseUserLevelData = (
 			});
 		}
 
-		dispatch({
-			type: "UPDATE_USER_REQUESTS",
-			fieldName: "user_level_reqs",
-			payload: {
-				total_requests: indi_total_requests,
-				data: indi_requests_data,
-			},
-		});
+		if (seletedUser === "All Users") {
+			dispatch({
+				type: "UPDATE_USER_REQUESTS",
+				fieldName: "user_level_reqs",
+				payload: {
+					total_requests: indi_total_requests,
+					data: indi_requests_data,
+				},
+			});
 
-		dispatch({
-			type: "UPDATE_USER_TOKENS",
-			fieldName: "user_tokens_data",
-			payload: { total_tokens: indi_total_tokens, data: indi_tokens_data },
-		});
+			dispatch({
+				type: "UPDATE_USER_TOKENS",
+				fieldName: "user_tokens_data",
+				payload: {
+					total_tokens: indi_total_tokens,
+					data: indi_tokens_data,
+				},
+			});
 
-		dispatch({
-			type: "UPDATE_USER_CONTEXT_TOKENS",
-			fieldName: "user_context_tokens_data",
-			payload: {
-				total_tokens: indi_total_context_tokens,
-				data: indi_context_tokens_data,
-			},
-		});
+			dispatch({
+				type: "UPDATE_USER_CONTEXT_TOKENS",
+				fieldName: "user_context_tokens_data",
+				payload: {
+					total_tokens: indi_total_context_tokens,
+					data: indi_context_tokens_data,
+				},
+			});
 
-		dispatch({
-			type: "UPDATE_USER_GENERATED_TOKENS",
-			fieldName: "user_generated_tokens_data",
-			payload: {
-				total_tokens: indi_total_generated_tokens,
-				data: indi_generated_tokens_data,
-			},
-		});
+			dispatch({
+				type: "UPDATE_USER_GENERATED_TOKENS",
+				fieldName: "user_generated_tokens_data",
+				payload: {
+					total_tokens: indi_total_generated_tokens,
+					data: indi_generated_tokens_data,
+				},
+			});
+		}
 	}
 };
 // data looks like this
