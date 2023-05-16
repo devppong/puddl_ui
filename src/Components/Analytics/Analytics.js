@@ -1,5 +1,15 @@
 import { useState, useEffect } from "react";
-import { Col, Grid, Title, Flex, Metric } from "@tremor/react";
+import {
+	Col,
+	Grid,
+	Title,
+	Flex,
+	Metric,
+	SelectBox,
+	SelectBoxItem,
+	Toggle,
+	ToggleItem,
+} from "@tremor/react";
 import { Badge } from "@tremor/react";
 import { MultiSelectBox, MultiSelectBoxItem } from "@tremor/react";
 import { DateRangePicker } from "@tremor/react";
@@ -13,11 +23,17 @@ import {
 	updateApiKey,
 	updateDateRange,
 	updateFilters,
+	updateOrgID,
+	updateSelectedUser,
 	validateApiKey,
 } from "./actions";
 import { StatusOfflineIcon, StatusOnlineIcon } from "@heroicons/react/solid";
 import Linechart from "./charts/Linechart";
 import { Input, Popover } from "antd";
+import { Typography } from "@mui/material";
+import UserLevelCost from "./charts/UserLevelCost";
+import UserLevelRequests from "./charts/UserLevelRequests";
+import UserLevelTokens from "./charts/UserLevelTokens";
 export default function Analytics() {
 	const initialState = {
 		data: {},
@@ -54,11 +70,15 @@ export default function Analytics() {
 				endDate: new Date(),
 			},
 		],
+		org_users: [],
+		seletedUser: "All Users",
 	};
 
 	const [state, dispatch] = useReducer(reducer, initialState);
 	const [apiKeyStatus, setApiKeyStatus] = useState("error");
 	const [apiKey, setApiKey] = useState("");
+	const [OrgID, setOrgID] = useState("");
+	const [seletedUser, setSeletedUser] = useState("All Users");
 
 	const handleUpdateFilters = (value) => {
 		updateFilters(dispatch, state, value);
@@ -66,6 +86,11 @@ export default function Analytics() {
 
 	const handleUpdateDateRange = (value) => {
 		updateDateRange(dispatch, state, value);
+	};
+
+	const handleSelectedUser = (value) => {
+		updateSelectedUser(dispatch, state, value);
+		setSeletedUser(value);
 	};
 
 	const onChangekey = async (e) => {
@@ -88,27 +113,36 @@ export default function Analytics() {
 		setApiKey(key);
 		updateApiKey(dispatch, state, key);
 	};
+
+	const onChangeOrgID = async (e) => {
+		localStorage.setItem("openAiOrgID", e.target.value);
+		setOrgID(e.target.value);
+		updateOrgID(dispatch, state, e.target.value);
+	};
 	//animate-ping bg-red-50 opacity-75
 
 	useEffect(() => {
 		// This will be called after the component mounts
 		let api_key = localStorage.getItem("openAiKey");
+		let org_id = localStorage.getItem("openAiOrgID");
 		if (api_key) {
 			setApiKeyStatus("success");
 			updateApiKey(dispatch, state, api_key);
 			setApiKey(api_key);
 		}
+		if (org_id) {
+			updateOrgID(dispatch, state, org_id);
+			setOrgID(org_id);
+		}
 	}, []);
 
-	//let {filters} = state;
 	return (
 		<main className="bg-slate-50 p-6 sm:p-10 w-min-full">
 			<Flex
 				style={{
-					display: "flex",
 					alignItems: "center",
 					flexWrap: "wrap",
-					justifyContent: "center",
+					justifyContent: "space-evenly",
 				}}
 			>
 				<Metric>Analytics</Metric>
@@ -199,18 +233,99 @@ export default function Analytics() {
 						text="Audio models"
 					/>
 				</MultiSelectBox>
-				<Popover title="Your OpenAI key is stored locally" className="grow">
-					<Input.Password
-						status={apiKeyStatus}
-						className="max-w-sm"
-						placeholder="OpenAI key(stored locally)"
-						onChange={onChangekey}
-						value={apiKey}
-						size="large"
-						style={{width:'320px'}}
-					/>
+				<SelectBox
+					className="max-w-sm space-y-6 gap-6"
+					onValueChange={handleSelectedUser}
+					value={seletedUser}
+					style={{ margin: "10px", width: "150px" }}
+					placeholder="Users"
+				>
+					<SelectBoxItem value="All Users" text="All Users" />
+					{state.org_users.map((user) => (
+						<SelectBoxItem
+							value={user[0]}
+							text={user[1]}
+							key={user[0]}
+						/>
+					))}
+				</SelectBox>
+			</Flex>
+			<Flex
+				style={{
+					justifyContent: "space-evenly",
+					flexWrap: "wrap",
+					alignItems: "baseline",
+					margin: "1rem auto",
+					gap: "2rem",
+				}}
+			>
+				<Popover title="Your OpenAI key is stored locally">
+					<label>OpenAI Key: </label>
+					<span>
+						<Input.Password
+							status={apiKeyStatus}
+							className="max-w-sm"
+							placeholder="OpenAI key(stored locally)"
+							onChange={onChangekey}
+							value={apiKey}
+							size="large"
+							style={{ width: "320px" }}
+						/>
+						<sub
+							style={{
+								display: "block",
+								textAlign: "center",
+								marginTop: "1em",
+							}}
+						>
+							click{" "}
+							<a
+								href="https://platform.openai.com/account/api-keys"
+								style={{ color: "blue" }}
+								target="_blank"
+								rel="noreferrer"
+							>
+								here
+							</a>{" "}
+							for your OpenAI key
+						</sub>
+					</span>
 				</Popover>
-				
+				<Popover title="Your OrgID is stored locally">
+					<label>OpenAI OrgID: </label>
+					<span>
+						<Input.Password
+							className="max-w-sm"
+							placeholder="OrgID(stored locally)"
+							onChange={onChangeOrgID}
+							value={OrgID}
+							size="large"
+							style={{ width: "320px" }}
+						/>
+						<sub
+							style={{
+								display: "block",
+								textAlign: "center",
+								marginTop: "1em",
+							}}
+						>
+							click{" "}
+							<a
+								href="https://platform.openai.com/account/org-settings"
+								style={{ color: "blue" }}
+								target="_blank"
+								rel="noreferrer"
+							>
+								here
+							</a>{" "}
+							for your OpenAI OrgID
+						</sub>
+					</span>
+				</Popover>
+				<Toggle defaultValue={1} onValueChange={(value) => {}}>
+					<ToggleItem value={0} text="USD" />
+					<ToggleItem value={1} text="Local Currency" />
+				</Toggle>
 			</Flex>
 			<Grid numColsLg={3} className="mt-6 gap-6 h-full">
 				<Col numColSpanLg={2}>
@@ -233,6 +348,35 @@ export default function Analytics() {
 					<CompUITok state={state} dispatch={dispatch} />
 				</Col>
 			</Grid>
+
+			{seletedUser === "All Users" && (
+				<>
+					<Typography
+						variant="h4"
+						style={{ margin: "4rem auto 2rem 1rem" }}
+					>
+						User Level Breakdown
+					</Typography>
+
+					<Grid numColsLg={3} className="mt-6 gap-6">
+						<Col numColSpanLg={1}>
+							<UserLevelCost state={state} dispatch={dispatch} />
+						</Col>
+						<Col numColSpanLg={1}>
+							<UserLevelRequests
+								state={state}
+								dispatch={dispatch}
+							/>
+						</Col>
+						<Col numColSpanLg={1}>
+							<UserLevelTokens
+								state={state}
+								dispatch={dispatch}
+							/>
+						</Col>
+					</Grid>
+				</>
+			)}
 		</main>
 	);
 }

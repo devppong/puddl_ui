@@ -300,9 +300,7 @@ function Dashboard(props) {
 						) : selectedComponent === "settings" ? (
 							<Settings />
 						) : null} */}
-						<Analytics
-							style={{ margin: "auto", display: "block" }}
-						/>
+						<Analytics />
 					</Container>
 				</Box>
 			</Box>
