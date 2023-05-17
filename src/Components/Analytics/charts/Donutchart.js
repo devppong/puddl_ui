@@ -31,6 +31,10 @@ export default function Donutchart({ state, dispatch }) {
         symbol = subscription_data.countryInfo.symbol;
         soft_limit = subscription_data.soft_limit_usd;
     }
+    let {selectedUSD} = state;
+    if(selectedUSD){
+        symbol = "$";
+    }
     const valueFormatter = (number) =>
     `${symbol} ${Intl.NumberFormat("us").format(number).toString()}`;
     let {percentage_array,percent_value,hard_limit} = getUsageData(subscription_data?subscription_data:{},total_usage);

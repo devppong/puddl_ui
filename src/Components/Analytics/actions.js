@@ -42,7 +42,7 @@ export const updateApiKey = async (dispatch, state, key) => {
 		payload: key,
 	});
 	state.api_key = key;
-	await getSubscriptionData(dispatch, state, key);
+	await getSubscriptionData(dispatch, state);
 	await updateDateRange(dispatch, state, state.date_range);
 };
 
@@ -88,12 +88,32 @@ export const updateSelectedUser = (dispatch, state, selectedUser) => {
 	});
 	if (selectedUser === "All Users") {
 		let { kpi_data } = state;
-		// console.log("kpi_data:", kpi_data);
 		parseKPIData(dispatch, kpi_data);
 	} else {
 		let { user_level_data } = state;
 		parseUserLevelData(dispatch, user_level_data, selectedUser);
 	}
+};
+
+export const updateSelectedCurrency = async (state, dispatch, value) => {
+	dispatch({
+		type: "UPDATE_USD",
+		payload: value,
+		fieldName: "selectedUSD",
+	});
+
+	await getSubscriptionData(dispatch, state, value);
+
+	let { chart_data, comp_chart_data, subscription_data, filters } = state;
+	let { conversion } = subscription_data;
+	console.log("conversion", conversion);
+	parseChartData(
+		dispatch,
+		chart_data,
+		comp_chart_data,
+		filters,
+		value ? 1 : conversion
+	);
 };
 
 export const getCostMetrics = async (dispatch, state, date_range) => {
@@ -269,19 +289,25 @@ export const validateApiKey = async (api_key) => {
 	return true;
 };
 
-export const getSubscriptionData = async (dispatch, state) => {
+export const getSubscriptionData = async (dispatch, state, selectedUSD) => {
 	let token = getToken(state);
 	let headers = getOpenAIHeaders(token ? token : "");
 	let url = `https://api.openai.com/dashboard/billing/subscription`;
 	let subscription_data = await axiosGet(url, headers);
 	if (!subscription_data) return;
-	await parseSubscriptionData(dispatch, state, subscription_data);
+	await parseSubscriptionData(
+		dispatch,
+		state,
+		subscription_data,
+		selectedUSD
+	);
 };
 
 export const parseSubscriptionData = async (
 	dispatch,
 	state,
-	subscription_data
+	subscription_data,
+	selectedUSD = false
 ) => {
 	let { soft_limit_usd, hard_limit_usd, billing_address } = subscription_data;
 	let countryName = "US";
@@ -294,8 +320,12 @@ export const parseSubscriptionData = async (
 	let url = prompt_api_url + `/currencyConversion/${currency}`;
 	let headers = getPromptAPIHeaders();
 	try {
-		let exchangeRate = await axiosGet(url, headers);
-		conversion = exchangeRate.conversion;
+		if (selectedUSD) {
+			conversion = 1;
+		} else {
+			let exchangeRate = await axiosGet(url, headers);
+			conversion = exchangeRate.conversion;
+		}
 		soft_limit_usd = soft_limit_usd * conversion;
 		hard_limit_usd = hard_limit_usd * conversion;
 	} catch (e) {
@@ -311,13 +341,7 @@ export const parseSubscriptionData = async (
 	await dispatch({
 		type: "UPDATE_SUBSCRIPTION_DATA",
 		fieldName: "subscription_data",
-		payload: {
-			soft_limit_usd,
-			hard_limit_usd,
-			countryInfo,
-			conversion,
-			//   countryCurrency
-		},
+		payload: updated_subscription_data,
 	});
 };
 
@@ -326,7 +350,6 @@ export const parseUserLevelData = (
 	user_level_data,
 	seletedUser = "All Users"
 ) => {
-	console.log(seletedUser);
 	let requests_map = {};
 	let total_requests = 0;
 	let indi_requests_map = {};

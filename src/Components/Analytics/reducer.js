@@ -12,6 +12,12 @@ export default function reducer(state, action) {
 				[action.fieldName]: action.payload,
 			};
 		}
+		case "UPDATE_USD": {
+			return {
+				...state,
+				[action.fieldName]: action.payload,
+			};
+		}
 		case "UPDATE_CHART_DATA": {
 			return {
 				...state,

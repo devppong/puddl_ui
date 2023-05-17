@@ -24,6 +24,7 @@ import {
 	updateDateRange,
 	updateFilters,
 	updateOrgID,
+	updateSelectedCurrency,
 	updateSelectedUser,
 	validateApiKey,
 } from "./actions";
@@ -72,6 +73,7 @@ export default function Analytics() {
 		],
 		org_users: [],
 		seletedUser: "All Users",
+		selectedUSD: false,
 	};
 
 	const [state, dispatch] = useReducer(reducer, initialState);
@@ -79,6 +81,7 @@ export default function Analytics() {
 	const [apiKey, setApiKey] = useState("");
 	const [OrgID, setOrgID] = useState("");
 	const [seletedUser, setSeletedUser] = useState("All Users");
+	const [selectedUSD, setSelectedUSD] = useState("All Users");
 
 	const handleUpdateFilters = (value) => {
 		updateFilters(dispatch, state, value);
@@ -322,9 +325,16 @@ export default function Analytics() {
 						</sub>
 					</span>
 				</Popover>
-				<Toggle defaultValue={1} onValueChange={(value) => {}}>
-					<ToggleItem value={0} text="USD" />
-					<ToggleItem value={1} text="Local Currency" />
+				<Toggle
+					defaultValue={false}
+					onValueChange={(value) => {
+						console.log(value)
+						setSelectedUSD(value);
+						updateSelectedCurrency(state,dispatch,value);
+					}}
+				>
+					<ToggleItem value={true} text="USD" />
+					<ToggleItem value={false} text="Local Currency" />
 				</Toggle>
 			</Flex>
 			<Grid numColsLg={3} className="mt-6 gap-6 h-full">

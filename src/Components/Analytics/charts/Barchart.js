@@ -14,7 +14,8 @@ export default function Barchart({ state, dispatch }) {
     let currency = "USD";
     let symbol = "$";
     let soft_limit = 0;
-    if(subscription_data&&subscription_data.countryInfo){
+    let {selectedUSD} = state
+    if(!selectedUSD && subscription_data&&subscription_data.countryInfo){
         currency = subscription_data.countryInfo.currency;
         symbol = subscription_data.countryInfo.symbol;
         soft_limit = subscription_data.countryInfo.soft_limit_usd;
@@ -38,7 +39,7 @@ export default function Barchart({ state, dispatch }) {
                 <Metric>{symbol} {total_usage}</Metric>
                 <BadgeDelta deltaType={getDeltaType(total_usage_percentage_change)}>{(total_usage_percentage_change?total_usage_percentage_change:0)+"%"}</BadgeDelta>
             </Flex>
-            {
+            {/* {
                 (total_usage>soft_limit)&&(
                     <Callout
                         className="h-12 mt-4"
@@ -49,7 +50,7 @@ export default function Barchart({ state, dispatch }) {
                         Turbine reached critical speed. Immediately reduce turbine speed.
                     </Callout>
                 )
-            }
+            } */}
             
             <BarChart
                 className="mt-6"
