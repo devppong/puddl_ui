@@ -88,8 +88,8 @@ export const updateSelectedUser = (dispatch, state, selectedUser) => {
 	});
 	if (selectedUser === "All Users") {
 		let { kpi_data } = state;
-		console.log("kpi_data:", kpi_data);
-		// parseKPIData(dispatch, kpi_data);
+		// console.log("kpi_data:", kpi_data);
+		parseKPIData(dispatch, kpi_data);
 	} else {
 		let { user_level_data } = state;
 		parseUserLevelData(dispatch, user_level_data, selectedUser);
@@ -245,11 +245,11 @@ export const getKPIMetrics = async (dispatch, state, date_range) => {
 	});
 	let kpi_data = await Promise.all(promise_array);
 	if (!kpi_data) return;
-	// dispatch({
-	// 	type: "UPDATE_KPI_DATA",
-	// 	payload: kpi_data,
-	// 	fieldName: "kpi_data",
-	// });
+	dispatch({
+		type: "UPDATE_KPI_DATA",
+		payload: kpi_data,
+		fieldName: "kpi_data",
+	});
 	parseKPIData(dispatch, kpi_data);
 };
 
