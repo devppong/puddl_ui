@@ -26,6 +26,18 @@ function calculateOpenAICost(usageArray) {
 			contextTokenCost: 0.02,
 			generatedTokenCost: 0.02,
 		},
+		'curie': {
+			contextTokenCost: 0.002,
+			generatedTokenCost: 0.002,
+		},
+		'babbage': {
+			contextTokenCost: 0.0005,
+			generatedTokenCost: 0.0005,
+		},
+		'ada': {
+			contextTokenCost: 0.0004,
+			generatedTokenCost: 0.0004,
+		},
 	};
 
 	let totalCost = 0;
