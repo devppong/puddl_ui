@@ -12,6 +12,37 @@ const getOpenAIHeaders = (token) => {
 	return headers;
 };
 
+function calculateOpenAICost(usageArray) {
+	const modelPricing = {
+		'gpt-4-0314': {
+			contextTokenCost: 0.03,
+			generatedTokenCost: 0.06,
+		},
+		'gpt-3.5-turbo': {
+			contextTokenCost: 0.002,
+			generatedTokenCost: 0.002,
+		},
+		'text-davinci-003': {
+			contextTokenCost: 0.02,
+			generatedTokenCost: 0.02,
+		}
+	};
+
+	let totalCost = 0;
+
+	for (const usage of usageArray) {
+		const contextTokens = usage.n_context_tokens_total;
+		const generatedTokens = usage.n_generated_tokens_total;
+		const modelPricingInfo = modelPricing[usage.snapshot_id];
+		const contextTokenCost = contextTokens * modelPricingInfo.contextTokenCost;
+		const generatedTokenCost = generatedTokens * modelPricingInfo.generatedTokenCost;
+		totalCost += contextTokenCost + generatedTokenCost;
+	}
+
+	return totalCost;
+}
+
+
 const getToken = (state) => {
 	return state.api_key;
 };
