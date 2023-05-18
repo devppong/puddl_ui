@@ -14,18 +14,18 @@ const getOpenAIHeaders = (token) => {
 
 function calculateOpenAICost(usageArray) {
 	const modelPricing = {
-		'gpt-4-0314': {
+		'gpt-4': {
 			contextTokenCost: 0.03,
 			generatedTokenCost: 0.06,
 		},
-		'gpt-3.5-turbo': {
+		'gpt-3.5': {
 			contextTokenCost: 0.002,
 			generatedTokenCost: 0.002,
 		},
-		'text-davinci-003': {
+		'davinci': {
 			contextTokenCost: 0.02,
 			generatedTokenCost: 0.02,
-		}
+		},
 	};
 
 	let totalCost = 0;
@@ -33,10 +33,15 @@ function calculateOpenAICost(usageArray) {
 	for (const usage of usageArray) {
 		const contextTokens = usage.n_context_tokens_total;
 		const generatedTokens = usage.n_generated_tokens_total;
-		const modelPricingInfo = modelPricing[usage.snapshot_id];
-		const contextTokenCost = contextTokens * modelPricingInfo.contextTokenCost;
-		const generatedTokenCost = generatedTokens * modelPricingInfo.generatedTokenCost;
-		totalCost += contextTokenCost + generatedTokenCost;
+
+		// Find the matching model pricing based on the entire key of usage.snapshot_id
+		const modelPricingInfo = Object.values(modelPricing).find(pricing => usage.snapshot_id.includes(Object.keys(pricing)[0]));
+
+		if (modelPricingInfo) {
+			const contextTokenCost = contextTokens * modelPricingInfo.contextTokenCost;
+			const generatedTokenCost = generatedTokens * modelPricingInfo.generatedTokenCost;
+			totalCost += contextTokenCost + generatedTokenCost;
+		}
 	}
 
 	return totalCost;
