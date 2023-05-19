@@ -12,29 +12,160 @@ const getOpenAIHeaders = (token) => {
 	return headers;
 };
 
-function calculateOpenAICost(usageArray) {
+function getCostsOfUserTokens(usagePerDay) {
+	const filterMap = {
+		"gpt-4": "GPT-4",
+		"gpt-3.5": "Chat models",
+		davinci: "Instruct models",
+		curie: "Instruct models",
+		babbage: "Instruct models",
+		ada: "Instruct models",
+	};
 	const modelPricing = {
-		'gpt-4': {
+		"gpt-4": {
 			contextTokenCost: 0.03,
 			generatedTokenCost: 0.06,
 		},
-		'gpt-3.5': {
+		"gpt-3.5": {
 			contextTokenCost: 0.002,
 			generatedTokenCost: 0.002,
 		},
-		'davinci': {
+		davinci: {
 			contextTokenCost: 0.02,
 			generatedTokenCost: 0.02,
 		},
-		'curie': {
+		curie: {
 			contextTokenCost: 0.002,
 			generatedTokenCost: 0.002,
 		},
-		'babbage': {
+		babbage: {
 			contextTokenCost: 0.0005,
 			generatedTokenCost: 0.0005,
 		},
-		'ada': {
+		ada: {
+			contextTokenCost: 0.0004,
+			generatedTokenCost: 0.0004,
+		},
+	};
+	const result = {};
+	for (let key in usagePerDay) {
+		const objKey = Object.keys(modelPricing).find((pricing) =>
+			key.includes(pricing)
+		);
+		const modelPricingInfo = modelPricing.hasOwnProperty(objKey)
+			? modelPricing[objKey]
+			: null;
+
+		let totalCost = 0;
+
+		if (modelPricingInfo) {
+			const contextTokenCost =
+				(usagePerDay[key].n_context_tokens_total *
+					modelPricingInfo.contextTokenCost) /
+				1000;
+			const generatedTokenCost =
+				(usagePerDay[key].n_generated_tokens_total *
+					modelPricingInfo.generatedTokenCost) /
+				1000;
+			totalCost += contextTokenCost + generatedTokenCost;
+		}
+
+		if (filterMap[objKey] in result) {
+			result[filterMap[objKey]] += totalCost;
+		} else {
+			result[filterMap[objKey]] = totalCost;
+		}
+	}
+	return result;
+}
+
+function calculatePerUserCosts(dispatch, state, usagePerUser, filters) {
+	let { subscription_data } = state;
+	let { conversion } = subscription_data;
+
+	// console.log(usagePerUser);
+	const perdayUsage = Object.keys(usagePerUser)
+		.sort()
+		.map((date) => {
+			return [
+				moment(date).format("DD MMM"),
+				getCostsOfUserTokens(usagePerUser[date]),
+			];
+		});
+	console.log(perdayUsage);
+	let bar_chart_data = [];
+	let donut_chart_data = [];
+	let donut_map = {};
+	let exchangeRate = conversion ? conversion : 1;
+	console.log(filters);
+	for (let i = 0; i < perdayUsage.length; i++) {
+		let obj = {};
+		let [day_month, line_items] = perdayUsage[i];
+		obj["topic"] = day_month;
+		for (let key in line_items) {
+			if (filters.indexOf(key) > -1) {
+				obj[key] = line_items[key] * exchangeRate;
+				if (donut_map[key]) {
+					donut_map[key] =
+						donut_map[key] + line_items[key] * exchangeRate;
+				} else {
+					donut_map[key] = line_items[key] * exchangeRate;
+				}
+			}
+		}
+		bar_chart_data.push(obj);
+	}
+
+	let total_usage = 0;
+	for (const [key, value] of Object.entries(donut_map)) {
+		let obj = {};
+		obj["topic"] = key;
+		obj["cost"] = value;
+		donut_chart_data.push(obj);
+		total_usage = total_usage + value;
+	}
+	console.log(bar_chart_data);
+	console.log(donut_chart_data);
+	dispatch({
+		type: "UPDATE_TOTAL_USAGE",
+		fieldName: "total_usage",
+		payload: total_usage.toFixed(2),
+	});
+	dispatch({
+		type: "UPDATE_BAR_CHART_DATA",
+		fieldName: "bar_chart_data",
+		payload: bar_chart_data,
+	});
+	dispatch({
+		type: "UPDATE_DONUT_CHART_DATA",
+		fieldName: "donut_chart_data",
+		payload: donut_chart_data,
+	});
+}
+
+function calculateOpenAICost(usageArray) {
+	const modelPricing = {
+		"gpt-4": {
+			contextTokenCost: 0.03,
+			generatedTokenCost: 0.06,
+		},
+		"gpt-3.5": {
+			contextTokenCost: 0.002,
+			generatedTokenCost: 0.002,
+		},
+		davinci: {
+			contextTokenCost: 0.02,
+			generatedTokenCost: 0.02,
+		},
+		curie: {
+			contextTokenCost: 0.002,
+			generatedTokenCost: 0.002,
+		},
+		babbage: {
+			contextTokenCost: 0.0005,
+			generatedTokenCost: 0.0005,
+		},
+		ada: {
 			contextTokenCost: 0.0004,
 			generatedTokenCost: 0.0004,
 		},
@@ -43,22 +174,29 @@ function calculateOpenAICost(usageArray) {
 	let totalCost = 0;
 
 	for (const usage of usageArray) {
-		const contextTokens = usage.n_context_tokens_total;
-		const generatedTokens = usage.n_generated_tokens_total;
+		const contextTokens = usage.n_context_tokens_total / 1000;
+		const generatedTokens = usage.n_generated_tokens_total / 1000;
 
 		// Find the matching model pricing based on the entire key of usage.snapshot_id
-		const modelPricingInfo = Object.values(modelPricing).find(pricing => usage.snapshot_id.includes(Object.keys(pricing)[0]));
+
+		const objKey = Object.keys(modelPricing).find((pricing) =>
+			usage.snapshot_id.includes(pricing)
+		);
+		const modelPricingInfo = modelPricing.hasOwnProperty(objKey)
+			? modelPricing[objKey]
+			: null;
 
 		if (modelPricingInfo) {
-			const contextTokenCost = contextTokens * modelPricingInfo.contextTokenCost;
-			const generatedTokenCost = generatedTokens * modelPricingInfo.generatedTokenCost;
+			const contextTokenCost =
+				contextTokens * modelPricingInfo.contextTokenCost;
+			const generatedTokenCost =
+				generatedTokens * modelPricingInfo.generatedTokenCost;
 			totalCost += contextTokenCost + generatedTokenCost;
 		}
 	}
 
 	return totalCost;
 }
-
 
 const getToken = (state) => {
 	return state.api_key;
@@ -110,10 +248,16 @@ export const updateDateRange = async (dispatch, state, date_range) => {
 		fieldName: "date_range",
 		payload: date_range,
 	});
+	let { selectedUser } = state;
 	if (date_range && date_range.length > 0) {
-		getCostMetrics(dispatch, state, date_range);
-		getKPIMetrics(dispatch, state, date_range);
-		getUserLevelMetrics(dispatch, state, date_range);
+		if (selectedUser === "All Users") {
+			getCostMetrics(dispatch, state, date_range);
+			getKPIMetrics(dispatch, state, date_range);
+			getUserLevelMetrics(dispatch, state, date_range);
+		} else {
+			// parseUserLevelData(dispatch, state, user_level_data, selectedUser, date_range);
+			getUserLevelMetrics(dispatch, state, date_range);
+		}
 	}
 };
 
@@ -123,23 +267,59 @@ export const updateFilters = (dispatch, state, filters) => {
 		payload: filters,
 		fieldName: "filters",
 	});
-	let { chart_data, comp_chart_data, subscription_data } = state;
-	let { conversion } = subscription_data;
-	parseChartData(dispatch, chart_data, comp_chart_data, filters, conversion);
+	let { selectedUser } = state;
+	if (selectedUser === "All Users") {
+		let { chart_data, comp_chart_data, subscription_data } = state;
+		let { conversion } = subscription_data;
+		console.log(filters);
+		parseChartData(
+			dispatch,
+			chart_data,
+			comp_chart_data,
+			filters,
+			conversion
+		);
+		let { kpi_data } = state;
+		parseKPIData(dispatch, kpi_data);
+	} else {
+		let { user_level_data } = state;
+		parseUserLevelData(
+			dispatch,
+			state,
+			user_level_data,
+			selectedUser,
+			filters
+		);
+	}
 };
 
 export const updateSelectedUser = (dispatch, state, selectedUser) => {
 	dispatch({
 		type: "UPDATE_SELECTED_USER",
 		payload: selectedUser,
-		fieldName: "seletedUser",
+		fieldName: "selectedUser",
 	});
+	let { chart_data, comp_chart_data, filters, subscription_data } = state;
+	let { conversion } = subscription_data;
 	if (selectedUser === "All Users") {
+		parseChartData(
+			dispatch,
+			chart_data,
+			comp_chart_data,
+			filters,
+			conversion
+		);
 		let { kpi_data } = state;
 		parseKPIData(dispatch, kpi_data);
 	} else {
 		let { user_level_data } = state;
-		parseUserLevelData(dispatch, user_level_data, selectedUser);
+		parseUserLevelData(
+			dispatch,
+			state,
+			user_level_data,
+			selectedUser,
+			filters
+		);
 	}
 };
 
@@ -152,15 +332,27 @@ export const updateSelectedCurrency = async (state, dispatch, value) => {
 
 	await getSubscriptionData(dispatch, state, value);
 
-	let { chart_data, comp_chart_data, subscription_data, filters } = state;
+	let {
+		chart_data,
+		comp_chart_data,
+		subscription_data,
+		filters,
+		user_level_data,
+	} = state;
 	let { conversion } = subscription_data;
-	console.log("conversion", conversion);
 	parseChartData(
 		dispatch,
 		chart_data,
 		comp_chart_data,
 		filters,
 		value ? 1 : conversion
+	);
+	parseUserLevelData(
+		dispatch,
+		state,
+		user_level_data,
+		value ? 1 : conversion,
+		filters
 	);
 };
 
@@ -231,6 +423,7 @@ function getAllDatesInRange(startDate, endDate) {
 }
 
 export const getUserLevelMetrics = async (dispatch, state, date_range) => {
+	console.log("getUserLevelMetrics");
 	let org_id = getOrgID(state);
 
 	if (!org_id) return;
@@ -239,7 +432,7 @@ export const getUserLevelMetrics = async (dispatch, state, date_range) => {
 	let end_date = moment(date_range[0]).add("1", "days").format("YYYY-MM-DD");
 	if (date_range[1]) {
 		end_date = moment(date_range[1]).format("YYYY-MM-DD");
-		if (start_date == end_date) {
+		if (start_date === end_date) {
 			end_date = moment(date_range[1])
 				.add("1", "days")
 				.format("YYYY-MM-DD");
@@ -289,7 +482,8 @@ export const getUserLevelMetrics = async (dispatch, state, date_range) => {
 		payload: user_level_data,
 		fieldName: "user_level_data",
 	});
-	parseUserLevelData(dispatch, user_level_data);
+	let { selectedUser, filters } = state;
+	parseUserLevelData(dispatch, state, user_level_data, selectedUser, filters);
 };
 
 export const getKPIMetrics = async (dispatch, state, date_range) => {
@@ -395,9 +589,12 @@ export const parseSubscriptionData = async (
 
 export const parseUserLevelData = (
 	dispatch,
+	state,
 	user_level_data,
-	seletedUser = "All Users"
+	selectedUser = "All Users",
+	filters
 ) => {
+	console.log("parseUserLevelData");
 	let requests_map = {};
 	let total_requests = 0;
 	let indi_requests_map = {};
@@ -429,8 +626,14 @@ export const parseUserLevelData = (
 		hourly_requests_map[i] = 0;
 	}
 
+	let usageArray = {};
+	let usagePerUser = {};
+
+	console.log(selectedUser);
+
 	for (let i = 0; i < user_level_data.length; i++) {
 		let indi_user = user_level_data[i];
+		usageArray[indi_user[0]] = [];
 		for (let j = 0; j < indi_user[1].length; j++) {
 			for (let k = 0; k < indi_user[1][j].data.length; k++) {
 				let {
@@ -440,8 +643,42 @@ export const parseUserLevelData = (
 					aggregation_timestamp,
 					snapshot_id,
 				} = indi_user[1][j].data[k];
+				usageArray[indi_user[0]].push({
+					n_context_tokens_total: n_context_tokens_total,
+					n_generated_tokens_total: n_generated_tokens_total,
+					snapshot_id: snapshot_id,
+				});
+				if (selectedUser === indi_user[0].split("|")[0]) {
+					const date = moment
+						.unix(aggregation_timestamp)
+						.format("YYYY-MM-DD");
+					if (date in usagePerUser) {
+						if (snapshot_id in usagePerUser[date]) {
+							usagePerUser[date][snapshot_id] = {
+								n_context_tokens_total:
+									usagePerUser[date][snapshot_id][
+										"n_context_tokens_total"
+									] + n_context_tokens_total,
+								n_generated_tokens_total:
+									usagePerUser[date][snapshot_id][
+										"n_generated_tokens_total"
+									] + n_generated_tokens_total,
+							};
+						} else {
+							usagePerUser[date][snapshot_id] = {
+								n_context_tokens_total: n_context_tokens_total,
+								n_generated_tokens_total:
+									n_generated_tokens_total,
+							};
+						}
+					} else {
+						usagePerUser[date] = {};
+						usagePerUser[date][snapshot_id] = {
+							n_context_tokens_total: n_context_tokens_total,
+							n_generated_tokens_total: n_generated_tokens_total,
+						};
+					}
 
-				if (seletedUser === indi_user[0].split("|")[0]) {
 					total_requests += n_requests;
 					if (requests_map[snapshot_id]) {
 						requests_map[snapshot_id] =
@@ -495,7 +732,7 @@ export const parseUserLevelData = (
 					}
 				}
 
-				if (seletedUser === "All Users") {
+				if (selectedUser === "All Users") {
 					indi_total_requests += n_requests;
 
 					if (indi_requests_map[indi_user[0].split("|")[1]]) {
@@ -561,7 +798,9 @@ export const parseUserLevelData = (
 		for (const [key, value] of Object.entries(indi_generated_tokens_map)) {
 			indi_generated_tokens_data.push({ name: key, value: value });
 		}
-		if (seletedUser === indi_user[0].split("|")[0]) {
+		if (selectedUser === indi_user[0].split("|")[0]) {
+			calculatePerUserCosts(dispatch, state, usagePerUser, filters);
+			// console.log(calculateOpenAICost(usageArray));
 			for (const [key, value] of Object.entries(requests_map)) {
 				requests_data.push({ name: key, value: value });
 			}
@@ -630,7 +869,7 @@ export const parseUserLevelData = (
 			});
 		}
 
-		if (seletedUser === "All Users") {
+		if (selectedUser === "All Users") {
 			dispatch({
 				type: "UPDATE_USER_REQUESTS",
 				fieldName: "user_level_reqs",
@@ -668,6 +907,21 @@ export const parseUserLevelData = (
 			});
 		}
 	}
+
+	const user_level_costs = [];
+	const { conversion } = state.subscription_data;
+	for (let userUsage in usageArray) {
+		user_level_costs.push({
+			name: userUsage.split("|")[1],
+			cost: calculateOpenAICost(usageArray[userUsage]) * conversion,
+		});
+	}
+	// console.log(user_level_costs);
+	dispatch({
+		type: "UPDATE_USER_LEVEL_COSTS",
+		payload: user_level_costs,
+		fieldName: "user_level_costs",
+	});
 };
 // data looks like this
 // "data": [

@@ -72,7 +72,7 @@ export default function Analytics() {
 			},
 		],
 		org_users: [],
-		seletedUser: "All Users",
+		selectedUser: "All Users",
 		selectedUSD: false,
 	};
 
@@ -80,7 +80,7 @@ export default function Analytics() {
 	const [apiKeyStatus, setApiKeyStatus] = useState("error");
 	const [apiKey, setApiKey] = useState("");
 	const [OrgID, setOrgID] = useState("");
-	const [seletedUser, setSeletedUser] = useState("All Users");
+	const [selectedUser, setselectedUser] = useState("All Users");
 	const [selectedUSD, setSelectedUSD] = useState("All Users");
 
 	const handleUpdateFilters = (value) => {
@@ -93,7 +93,7 @@ export default function Analytics() {
 
 	const handleSelectedUser = (value) => {
 		updateSelectedUser(dispatch, state, value);
-		setSeletedUser(value);
+		setselectedUser(value);
 	};
 
 	const onChangekey = async (e) => {
@@ -239,7 +239,7 @@ export default function Analytics() {
 				<SelectBox
 					className="max-w-sm space-y-6 gap-6"
 					onValueChange={handleSelectedUser}
-					value={seletedUser}
+					value={selectedUser}
 					style={{ margin: "10px", width: "150px" }}
 					placeholder="Users"
 				>
@@ -359,7 +359,7 @@ export default function Analytics() {
 				</Col>
 			</Grid>
 
-			{seletedUser === "All Users" && (
+			{selectedUser === "All Users" && (
 				<>
 					<Typography
 						variant="h4"

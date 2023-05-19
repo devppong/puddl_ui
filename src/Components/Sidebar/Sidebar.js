@@ -39,7 +39,7 @@ export default function Sidebar(props) {
 
 	return (
 		<>
-			<List component="nav">
+			<List component='nav'>
 				<React.Fragment>
 					<ListItemButton
 						// onClick={() => {
@@ -49,14 +49,14 @@ export default function Sidebar(props) {
 							cursor: "no-drop",
 						}}
 						aria-owns={open ? "mouse-over-popover" : undefined}
-						aria-haspopup="true"
+						aria-haspopup='true'
 						onMouseEnter={handlePopoverOpen}
 						onMouseLeave={handlePopoverClose}
 					>
 						<ListItemIcon>
 							<AttractionsOutlined />
 						</ListItemIcon>
-						<ListItemText primary="Playground" />
+						<ListItemText primary='Playground' />
 					</ListItemButton>
 					<ListItemButton
 						// onClick={() => {
@@ -66,14 +66,14 @@ export default function Sidebar(props) {
 							cursor: "no-drop",
 						}}
 						aria-owns={open ? "mouse-over-popover" : undefined}
-						aria-haspopup="true"
+						aria-haspopup='true'
 						onMouseEnter={handlePopoverOpen}
 						onMouseLeave={handlePopoverClose}
 					>
 						<ListItemIcon>
 							<ListAltOutlined />
 						</ListItemIcon>
-						<ListItemText primary="Prompt Registry" />
+						<ListItemText primary='Prompt Registry' />
 					</ListItemButton>
 					<ListItemButton
 						// onClick={() => {
@@ -83,14 +83,14 @@ export default function Sidebar(props) {
 							cursor: "no-drop",
 						}}
 						aria-owns={open ? "mouse-over-popover" : undefined}
-						aria-haspopup="true"
+						aria-haspopup='true'
 						onMouseEnter={handlePopoverOpen}
 						onMouseLeave={handlePopoverClose}
 					>
 						<ListItemIcon>
 							<History />
 						</ListItemIcon>
-						<ListItemText primary="History" />
+						<ListItemText primary='History' />
 					</ListItemButton>
 					<ListItemButton
 						onClick={() => {
@@ -113,7 +113,19 @@ export default function Sidebar(props) {
 								}}
 							/>
 						</ListItemIcon>
-						<ListItemText primary="Analytics" />
+						<ListItemText primary='Analytics' />
+					</ListItemButton>
+					<ListItemButton
+						onClick={() =>
+							window.open(
+								"https://puddl.canny.io/feature-requests"
+							)
+						}
+					>
+						<ListItemIcon>
+							<InsertChartOutlined />
+						</ListItemIcon>
+						<ListItemText primary='Features' />
 					</ListItemButton>
 					{/* <ListItemButton
 						// onClick={() => {
@@ -132,7 +144,7 @@ export default function Sidebar(props) {
 				</React.Fragment>
 				<Divider sx={{ my: 1 }} />
 				<Popover
-					id="mouse-over-popover"
+					id='mouse-over-popover'
 					sx={{
 						pointerEvents: "none",
 					}}
@@ -149,7 +161,9 @@ export default function Sidebar(props) {
 					onClose={handlePopoverClose}
 					disableRestoreFocus
 				>
-					<Typography sx={{ p: 1, color:"#1d4ed8" }}>Coming Soon!</Typography>
+					<Typography sx={{ p: 1, color: "#1d4ed8" }}>
+						Coming Soon!
+					</Typography>
 				</Popover>
 				{/* <Snackbar
 					open={open}

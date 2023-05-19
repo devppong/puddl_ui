@@ -26,12 +26,17 @@ const getPercentage = (hard_limit, total_usage) => {
 	return percent_value;
 };
 export default function UserLevelCost({ state, dispatch }) {
-	let { donut_chart_data, filters, total_usage, subscription_data } = state;
+	let { user_level_costs, filters, total_usage, subscription_data } = state;
+	// console.log(user_level_costs);
 	let symbol = "$";
-	let soft_limit = 0;
+	// let soft_limit = 0;
 	if (subscription_data && subscription_data.countryInfo) {
 		symbol = subscription_data.countryInfo.symbol;
-		soft_limit = subscription_data.soft_limit_usd;
+		// soft_limit = subscription_data.soft_limit_usd;
+	}
+	let { selectedUSD } = state;
+	if (selectedUSD) {
+		symbol = "$";
 	}
 	const valueFormatter = (number) =>
 		`${symbol} ${Intl.NumberFormat("us").format(number).toString()}`;
@@ -55,9 +60,9 @@ export default function UserLevelCost({ state, dispatch }) {
 			<DonutChart
 				variant="pie"
 				className="mt-6"
-				data={donut_chart_data}
+				data={user_level_costs}
 				category="cost"
-				index="topic"
+				index="name"
 				valueFormatter={valueFormatter}
 				colors={["blue", "teal", "amber", "rose", "indigo", "emerald"]}
 			/>

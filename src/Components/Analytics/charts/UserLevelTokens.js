@@ -30,7 +30,7 @@ const renderCard = (value, state) => {
 						<Bold>User</Bold>
 					</Text>
 					<Text>
-						<Bold>Requests</Bold>
+						<Bold>Tokens</Bold>
 					</Text>
 				</Flex>
 				<BarList data={data} className="mt-2" />
