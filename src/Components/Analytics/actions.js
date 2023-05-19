@@ -338,22 +338,27 @@ export const updateSelectedCurrency = async (state, dispatch, value) => {
 		subscription_data,
 		filters,
 		user_level_data,
+		selectedUser,
 	} = state;
 	let { conversion } = subscription_data;
-	parseChartData(
-		dispatch,
-		chart_data,
-		comp_chart_data,
-		filters,
-		value ? 1 : conversion
-	);
-	parseUserLevelData(
-		dispatch,
-		state,
-		user_level_data,
-		value ? 1 : conversion,
-		filters
-	);
+
+	if (selectedUser === "All Users") {
+		parseChartData(
+			dispatch,
+			chart_data,
+			comp_chart_data,
+			filters,
+			value ? 1 : conversion
+		);
+	} else {
+		parseUserLevelData(
+			dispatch,
+			state,
+			user_level_data,
+			selectedUser,
+			filters
+		);
+	}
 };
 
 export const getCostMetrics = async (dispatch, state, date_range) => {

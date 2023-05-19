@@ -1,4 +1,4 @@
-import { Card, Title, DonutChart, Metric } from "@tremor/react";
+import { Card, Title, DonutChart, Metric, Legend } from "@tremor/react";
 import { Flex, Text, CategoryBar } from "@tremor/react";
 
 const getUsageData = (subscription_data, total_usage) => {
@@ -45,12 +45,12 @@ export default function UserLevelCost({ state, dispatch }) {
 		total_usage
 	);
 	return (
-		<Card className="max-w-lg h-full">
+		<Card className='max-w-lg h-full'>
 			<Title>User Level Cost</Title>
 			<Flex
-				justifyContent="start"
-				alignItems="baseline"
-				className="space-x-1"
+				justifyContent='start'
+				alignItems='baseline'
+				className='space-x-1'
 			>
 				<Metric>
 					{symbol} {total_usage}
@@ -58,15 +58,33 @@ export default function UserLevelCost({ state, dispatch }) {
 				<Text>/ {hard_limit.toFixed(2)}</Text>
 			</Flex>
 			<DonutChart
-				variant="pie"
-				className="mt-6"
+				variant='pie'
+				className='mt-6'
 				data={user_level_costs}
-				category="cost"
-				index="name"
+				category='cost'
+				index='name'
 				valueFormatter={valueFormatter}
 				colors={["blue", "teal", "amber", "rose", "indigo", "emerald"]}
+				showLabel={true}
 			/>
-			<Flex>
+			{user_level_costs && (
+				<Flex justifyContent="center">
+					<Legend
+						className='mt-6'
+						categories={user_level_costs.map((item) => item.name)}
+						colors={[
+							"blue",
+							"teal",
+							"amber",
+							"rose",
+							"indigo",
+							"emerald",
+						]}
+					/>
+				</Flex>
+			)}
+
+			{/* <Flex>
 				<Text>
 					{getPercentage(hard_limit, total_usage)}% of the limit
 				</Text>
@@ -79,8 +97,8 @@ export default function UserLevelCost({ state, dispatch }) {
 				// showLabels={true}
 				colors={["emerald", "orange", "rose"]}
 				percentageValue={getPercentage(hard_limit, total_usage)}
-				className="mt-3"
-			/>
+				className='mt-3'
+			/> */}
 		</Card>
 	);
 }
