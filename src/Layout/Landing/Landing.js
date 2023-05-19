@@ -94,7 +94,7 @@ function Landing(props) {
 						color: "#da552f",
 					}}
 				>
-					We are launching on Product Hunt soon!
+					We're live on Product Hunt!
 				</Typography>
 				<a
 					href='https://www.producthunt.com/posts/puddl-3?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-puddl&#0045;3'
