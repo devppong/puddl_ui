@@ -74,6 +74,7 @@ export default function Analytics() {
 		org_users: [],
 		selectedUser: "All Users",
 		selectedUSD: false,
+		user_level_data: [],
 	};
 
 	const [state, dispatch] = useReducer(reducer, initialState);
@@ -140,19 +141,20 @@ export default function Analytics() {
 	}, []);
 
 	return (
-		<main className="bg-slate-50 p-6 sm:p-10 w-min-full">
+		<main className='bg-slate-50 p-6 sm:p-10 w-min-full'>
 			<Flex
 				style={{
 					alignItems: "center",
 					flexWrap: "wrap",
 					justifyContent: "space-evenly",
 				}}
+				id='analytics-top'
 			>
 				<Metric>Analytics</Metric>
 				{apiKeyStatus === "success" ? (
 					<Badge
-						className="max-w-sm "
-						color="green"
+						className='max-w-sm '
+						color='green'
 						style={{ margin: "10px" }}
 					>
 						<span
@@ -163,18 +165,18 @@ export default function Analytics() {
 							}}
 						>
 							<span
-								className="animate-ping bg-green-50 opacity-75"
+								className='animate-ping bg-green-50 opacity-75'
 								style={{ width: "10px" }}
 							>
 								<StatusOnlineIcon />
 							</span>
-							<span className="ml-2">Active</span>
+							<span className='ml-2'>Active</span>
 						</span>
 					</Badge>
 				) : (
 					<Badge
-						className="max-w-sm "
-						color="red"
+						className='max-w-sm '
+						color='red'
 						style={{ margin: "10px" }}
 					>
 						<span
@@ -185,65 +187,65 @@ export default function Analytics() {
 							}}
 						>
 							<span
-								className="animate-ping bg-red-50 opacity-75"
+								className='animate-ping bg-red-50 opacity-75'
 								style={{ width: "10px" }}
 							>
 								<StatusOfflineIcon />
 							</span>
-							<span className="ml-2">Inactive</span>
+							<span className='ml-2'>Inactive</span>
 						</span>
 					</Badge>
 				)}
 				<DateRangePicker
 					style={{ margin: "10px", maxWidth: "350px" }}
-					className="max-w-sm"
+					className='max-w-sm'
 					enableDropdown={true}
 					value={state.date_range}
 					onValueChange={handleUpdateDateRange}
 					options={state.datePickerOptions}
-					dropdownPlaceholder="Timeline"
+					dropdownPlaceholder='Timeline'
 				/>
 				<MultiSelectBox
-					className="max-w-sm space-y-6 gap-6"
+					className='max-w-sm space-y-6 gap-6'
 					onValueChange={handleUpdateFilters}
 					value={state.filters}
 					style={{ margin: "10px", width: "150px" }}
-					placeholder="Model Types"
+					placeholder='Model Types'
 				>
 					<MultiSelectBoxItem
-						value="Instruct models"
-						text="Instruct models"
+						value='Instruct models'
+						text='Instruct models'
 					/>
 					<MultiSelectBoxItem
-						value="Chat models"
-						text="Chat models"
+						value='Chat models'
+						text='Chat models'
 					/>
-					<MultiSelectBoxItem value="GPT-4" text="GPT-4" />
+					<MultiSelectBoxItem value='GPT-4' text='GPT-4' />
 					<MultiSelectBoxItem
-						value="Fine-tuned models"
-						text="Fine-tuned models"
-					/>
-					<MultiSelectBoxItem
-						value="Embedding models"
-						text="Embedding models"
+						value='Fine-tuned models'
+						text='Fine-tuned models'
 					/>
 					<MultiSelectBoxItem
-						value="Image models"
-						text="Image models"
+						value='Embedding models'
+						text='Embedding models'
 					/>
 					<MultiSelectBoxItem
-						value="Audio models"
-						text="Audio models"
+						value='Image models'
+						text='Image models'
+					/>
+					<MultiSelectBoxItem
+						value='Audio models'
+						text='Audio models'
 					/>
 				</MultiSelectBox>
 				<SelectBox
-					className="max-w-sm space-y-6 gap-6"
+					className='max-w-sm space-y-6 gap-6'
 					onValueChange={handleSelectedUser}
 					value={selectedUser}
 					style={{ margin: "10px", width: "150px" }}
-					placeholder="Users"
+					placeholder='Users'
 				>
-					<SelectBoxItem value="All Users" text="All Users" />
+					<SelectBoxItem value='All Users' text='All Users' />
 					{state.org_users.map((user) => (
 						<SelectBoxItem
 							value={user[0]}
@@ -262,16 +264,16 @@ export default function Analytics() {
 					gap: "2rem",
 				}}
 			>
-				<Popover title="Your OpenAI key is stored locally">
+				<Popover title='Your OpenAI key is stored locally'>
 					<label>OpenAI Key: </label>
 					<span>
 						<Input.Password
 							status={apiKeyStatus}
-							className="max-w-sm"
-							placeholder="OpenAI key(stored locally)"
+							className='max-w-sm'
+							placeholder='OpenAI key(stored locally)'
 							onChange={onChangekey}
 							value={apiKey}
-							size="large"
+							size='large'
 							style={{ width: "320px" }}
 						/>
 						<sub
@@ -283,10 +285,10 @@ export default function Analytics() {
 						>
 							click{" "}
 							<a
-								href="https://platform.openai.com/account/api-keys"
+								href='https://platform.openai.com/account/api-keys'
 								style={{ color: "blue" }}
-								target="_blank"
-								rel="noreferrer"
+								target='_blank'
+								rel='noreferrer'
 							>
 								here
 							</a>{" "}
@@ -294,15 +296,15 @@ export default function Analytics() {
 						</sub>
 					</span>
 				</Popover>
-				<Popover title="Your OrgID is stored locally">
+				<Popover title='Your OrgID is stored locally'>
 					<label>OpenAI OrgID: </label>
 					<span>
 						<Input.Password
-							className="max-w-sm"
-							placeholder="OrgID(stored locally)"
+							className='max-w-sm'
+							placeholder='OrgID(stored locally)'
 							onChange={onChangeOrgID}
 							value={OrgID}
-							size="large"
+							size='large'
 							style={{ width: "320px" }}
 						/>
 						<sub
@@ -314,10 +316,10 @@ export default function Analytics() {
 						>
 							click{" "}
 							<a
-								href="https://platform.openai.com/account/org-settings"
+								href='https://platform.openai.com/account/org-settings'
 								style={{ color: "blue" }}
-								target="_blank"
-								rel="noreferrer"
+								target='_blank'
+								rel='noreferrer'
 							>
 								here
 							</a>{" "}
@@ -328,16 +330,16 @@ export default function Analytics() {
 				<Toggle
 					defaultValue={false}
 					onValueChange={(value) => {
-						console.log(value)
+						console.log(value);
 						setSelectedUSD(value);
-						updateSelectedCurrency(state,dispatch,value);
+						updateSelectedCurrency(state, dispatch, value);
 					}}
 				>
-					<ToggleItem value={true} text="USD" />
-					<ToggleItem value={false} text="Local Currency" />
+					<ToggleItem value={true} text='USD' />
+					<ToggleItem value={false} text='Local Currency' />
 				</Toggle>
 			</Flex>
-			<Grid numColsLg={3} className="mt-6 gap-6 h-full">
+			<Grid numColsLg={3} className='mt-6 gap-6 h-full'>
 				<Col numColSpanLg={2}>
 					{<Barchart state={state} dispatch={dispatch} />}
 				</Col>
@@ -347,7 +349,7 @@ export default function Analytics() {
 			</Grid>
 
 			{/* {<Barchart state={state} dispatch={dispatch} />} */}
-			<Grid numColsLg={3} className="mt-6 gap-6">
+			<Grid numColsLg={3} className='mt-6 gap-6'>
 				<Col numColSpanLg={1}>
 					<Donutchart state={state} dispatch={dispatch} />
 				</Col>
@@ -362,13 +364,31 @@ export default function Analytics() {
 			{selectedUser === "All Users" && (
 				<>
 					<Typography
-						variant="h4"
+						variant='h4'
 						style={{ margin: "4rem auto 2rem 1rem" }}
 					>
 						User Level Breakdown
+						{!OrgID && (
+							<Typography
+								variant='body1'
+								onClick={() => {
+									let ele =
+										document.getElementById(
+											"analytics-top"
+										);
+									ele.scrollIntoView();
+								}}
+								sx={{
+									color: "#da552f",
+									cursor: "pointer",
+								}}
+							>
+								(Input org id for user level details)
+							</Typography>
+						)}
 					</Typography>
 
-					<Grid numColsLg={3} className="mt-6 gap-6">
+					<Grid numColsLg={3} className='mt-6 gap-6'>
 						<Col numColSpanLg={1}>
 							<UserLevelCost state={state} dispatch={dispatch} />
 						</Col>

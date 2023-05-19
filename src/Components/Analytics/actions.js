@@ -255,10 +255,10 @@ export const updateDateRange = async (dispatch, state, date_range) => {
 		if (selectedUser === "All Users") {
 			getCostMetrics(dispatch, state, date_range);
 			getKPIMetrics(dispatch, state, date_range);
-			getUserLevelMetrics(dispatch, state, date_range);
+			getUserLevelMetrics(dispatch, state, date_range, selectedUser);
 		} else {
 			// parseUserLevelData(dispatch, state, user_level_data, selectedUser, date_range);
-			getUserLevelMetrics(dispatch, state, date_range);
+			getUserLevelMetrics(dispatch, state, date_range, selectedUser);
 		}
 	}
 };
@@ -320,13 +320,12 @@ export const updateSelectedUser = async (dispatch, state, selectedUser) => {
 		let { kpi_data } = state;
 		parseKPIData(dispatch, kpi_data);
 	} else {
-		console.log(selectedUser);
+		console.log("Hello");
 		let { user_level_data } = state;
-		console.log(user_level_data);
-		if (!user_level_data) {
-			Promise.all(await getUserLevelMetrics(dispatch,state,date_range));
-		}
-		console.log(user_level_data);
+		console.log("user_level_data: ", user_level_data);
+
+		// getUserLevelMetrics(dispatch,state)
+
 		parseUserLevelData(
 			dispatch,
 			state,
@@ -374,7 +373,7 @@ export const updateSelectedCurrency = async (state, dispatch, value) => {
 };
 
 export const getCostMetrics = async (dispatch, state, date_range) => {
-	console.log('getCostMetrics');
+	console.log("getCostMetrics");
 	let start_date = moment(date_range[0]).format("YYYY-MM-DD");
 	let end_date = moment(date_range[0]).add("1", "days").format("YYYY-MM-DD");
 	if (date_range[1]) {
@@ -440,8 +439,13 @@ function getAllDatesInRange(startDate, endDate) {
 	return dates;
 }
 
-export const getUserLevelMetrics = async (dispatch, state, date_range) => {
-	// console.log("getUserLevelMetrics");
+export const getUserLevelMetrics = async (
+	dispatch,
+	state,
+	date_range,
+	selectedUser
+) => {
+	console.log("getUserLevelMetrics");
 	let org_id = getOrgID(state);
 
 	if (!org_id) return;
@@ -500,7 +504,8 @@ export const getUserLevelMetrics = async (dispatch, state, date_range) => {
 		payload: user_level_data,
 		fieldName: "user_level_data",
 	});
-	let { selectedUser, filters } = state;
+	let { filters } = state;
+	console.log("metrics:", selectedUser);
 	parseUserLevelData(dispatch, state, user_level_data, selectedUser, filters);
 };
 
@@ -612,7 +617,8 @@ export const parseUserLevelData = (
 	selectedUser = "All Users",
 	filters
 ) => {
-	// console.log("parseUserLevelData");
+	console.log("parseUserLevelData");
+	console.log("selectedUser", state.selectedUser);
 	let requests_map = {};
 	let total_requests = 0;
 	let indi_requests_map = {};
@@ -647,8 +653,6 @@ export const parseUserLevelData = (
 	let usageArray = {};
 	let usagePerUser = {};
 
-	// console.log(selectedUser);
-
 	for (let i = 0; i < user_level_data.length; i++) {
 		let indi_user = user_level_data[i];
 		usageArray[indi_user[0]] = [];
@@ -661,11 +665,13 @@ export const parseUserLevelData = (
 					aggregation_timestamp,
 					snapshot_id,
 				} = indi_user[1][j].data[k];
+
 				usageArray[indi_user[0]].push({
 					n_context_tokens_total: n_context_tokens_total,
 					n_generated_tokens_total: n_generated_tokens_total,
 					snapshot_id: snapshot_id,
 				});
+
 				if (selectedUser === indi_user[0].split("|")[0]) {
 					const date = moment
 						.unix(aggregation_timestamp)
@@ -1164,7 +1170,7 @@ export const parseChartData = (
 		obj["cost"] = value;
 		donut_chart_data.push(obj);
 	}
-	console.log(total_usage);
+	// console.log(total_usage);
 	total_usage = total_usage.toFixed(2);
 	// if (!total_usage || total_usage <= 0) total_usage = 0;
 	// else total_usage = ((total_usage / 100) * exchangeRate).toFixed(2);

@@ -18,7 +18,6 @@ import {
 	Twitter,
 } from "@mui/icons-material";
 import "./Landing.css";
-import LandingPageIcon from "./../../assets/landing-page.jpeg";
 function Landing(props) {
 	const el = useRef(null);
 
@@ -200,7 +199,7 @@ function Landing(props) {
 					>
 						<img
 							class='block mx-auto lg:mr-0 pr-6 lg:max-w-[500px]'
-							src={"https://i.imgur.com/gIS4DGx.png"}
+							src={"https://i.imgur.com/8sf2Is2.png"}
 							style={{
 								filter: "drop-shadow(0.5rem 0.5rem 0.25rem rgba(0, 0, 0, 0.075))",
 							}}
