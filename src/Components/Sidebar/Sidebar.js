@@ -126,7 +126,7 @@ export default function Sidebar(props) {
 						<ListItemIcon>
 							<LightbulbOutlined />
 						</ListItemIcon>
-						<ListItemText primary='Features' />
+						<ListItemText primary='Feature Requests' />
 					</ListItemButton>
 					{/* <ListItemButton
 						// onClick={() => {
