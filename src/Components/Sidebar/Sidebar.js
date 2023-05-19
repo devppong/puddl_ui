@@ -11,6 +11,7 @@ import {
 	ClosedCaption,
 	History,
 	InsertChartOutlined,
+	LightbulbOutlined,
 	ListAltOutlined,
 	Settings,
 } from "@mui/icons-material";
@@ -123,7 +124,7 @@ export default function Sidebar(props) {
 						}
 					>
 						<ListItemIcon>
-							<InsertChartOutlined />
+							<LightbulbOutlined />
 						</ListItemIcon>
 						<ListItemText primary='Features' />
 					</ListItemButton>
