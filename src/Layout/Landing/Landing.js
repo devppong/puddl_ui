@@ -200,7 +200,7 @@ function Landing(props) {
 					>
 						<img
 							class='block mx-auto lg:mr-0 pr-6 lg:max-w-[500px]'
-							src={LandingPageIcon}
+							src={"https://i.imgur.com/gIS4DGx.png"}
 							style={{
 								filter: "drop-shadow(0.5rem 0.5rem 0.25rem rgba(0, 0, 0, 0.075))",
 							}}
