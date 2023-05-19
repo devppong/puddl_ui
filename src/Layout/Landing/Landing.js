@@ -56,12 +56,12 @@ function Landing(props) {
 				>
 					<img
 						src={logo}
-						alt="logo"
+						alt='logo'
 						style={{ height: "2rem", display: "inline" }}
 					/>
 					<Typography
-						variant="h5"
-						color="#1d4ed8"
+						variant='h5'
+						color='#1d4ed8'
 						noWrap
 						fontSize={"1.5rem"}
 						fontWeight={"bold"}
@@ -72,7 +72,7 @@ function Landing(props) {
 				</Stack>
 
 				<Button
-					variant="contained"
+					variant='contained'
 					sx={{
 						bgcolor: "#1d4ed8",
 						fontWeight: "700",
@@ -89,7 +89,33 @@ function Landing(props) {
 
 			<Box sx={{ textAlign: "center", paddingY: "7rem" }}>
 				<Typography
-					variant="h2"
+					variant='h6'
+					sx={{
+						color: "#da552f",
+					}}
+				>
+					We are launching on Product Hunt soon!
+				</Typography>
+				<a
+					href='https://www.producthunt.com/posts/puddl-3?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-puddl&#0045;3'
+					target='_blank'
+					rel={"noreferrer"}
+					style={{
+						display: "block",
+						width: "250px",
+						margin: "0.5rem auto 1.5rem auto",
+					}}
+				>
+					<img
+						src='https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=392737&theme=light'
+						alt='Puddl - Get&#0032;Complete&#0032;Breakdown&#0032;of&#0032;OpenAI&#0032;API&#0032;Usage&#0032;for&#0032;Free | Product Hunt'
+						style={{ width: "250px", height: "54px" }}
+						width='250'
+						height='54'
+					/>
+				</a>
+				<Typography
+					variant='h2'
 					sx={{
 						fontWeight: "600",
 						fontSize: "3.5rem",
@@ -99,25 +125,25 @@ function Landing(props) {
 					Track your OpenAI costs for free.
 					<span style={{ display: "block", color: "#1d4ed8" }}>
 						<span ref={el} />
-						<span className="typed-cursor" />
+						<span className='typed-cursor' />
 					</span>
 				</Typography>
 				<Typography
-					variant="h6"
+					variant='h6'
 					sx={{
 						fontWeight: "300",
 						fontSize: "1.25rem",
 						mb: "2.5rem",
 					}}
 				>
-					Get insights to reduce costs in {" "}
+					Get insights to reduce costs in{" "}
 					<b style={{ color: "#1d4ed8", fontWeight: "bolder" }}>
-					seconds!
+						seconds!
 					</b>
 				</Typography>
 				<Button
-					variant="contained"
-					size="large"
+					variant='contained'
+					size='large'
 					sx={{
 						bgcolor: "#1d4ed8",
 						fontWeight: "700",
@@ -143,11 +169,11 @@ function Landing(props) {
 				>
 					<Grid item lg={6}>
 						<Typography
-							variant="h1"
+							variant='h1'
 							fontSize={"3.5rem"}
 							fontWeight={600}
 							textAlign={"left"}
-							px={{xs:"1rem",md:"0rem"}}
+							px={{ xs: "1rem", md: "0rem" }}
 						>
 							{"Get your "}
 							{/* class="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary capitalize" */}
@@ -173,14 +199,14 @@ function Landing(props) {
 						marginX={"auto"}
 					>
 						<img
-							class="block mx-auto lg:mr-0 pr-6 lg:max-w-[500px]"
+							class='block mx-auto lg:mr-0 pr-6 lg:max-w-[500px]'
 							src={LandingPageIcon}
 							style={{
 								filter: "drop-shadow(0.5rem 0.5rem 0.25rem rgba(0, 0, 0, 0.075))",
 							}}
-							width="500"
-							height="370"
-							alt="product image"
+							width='500'
+							height='370'
+							alt='product image'
 						/>
 					</Grid>
 				</Grid>
@@ -189,8 +215,8 @@ function Landing(props) {
 				<Grid
 					container
 					spacing={4}
-					display="flex"
-					justifyContent="center"
+					display='flex'
+					justifyContent='center'
 				>
 					<Grid
 						item
@@ -211,7 +237,43 @@ function Landing(props) {
 							}}
 						></div>
 						<Typography
-							variant="h5"
+							variant='h5'
+							fontWeight={600}
+							fontFamily={
+								"Inter,'Roboto','Helvetica','Arial',sans-serif"
+							}
+							mb={"0.5rem"}
+						>
+							{"Your Keys are"}
+							<br />
+							{"Secure"}
+						</Typography>
+						<Typography>
+							{
+								"Your private key are securely stored in your browser and never sent to our servers."
+							}
+						</Typography>
+					</Grid>
+					<Grid
+						item
+						xs={12}
+						sm={6}
+						md={4}
+						lg={3}
+						mt={"1rem"}
+						py={"1.5rem"}
+						borderRadius={"0.25rem"}
+					>
+						<div
+							style={{
+								marginBottom: "2rem",
+								backgroundImage:
+									"linear-gradient(to right,rgba(29,78,216,1),rgba(219,39,119,1))",
+								height: "0.25rem",
+							}}
+						></div>
+						<Typography
+							variant='h5'
 							fontWeight={600}
 							fontFamily={
 								"Inter,'Roboto','Helvetica','Arial',sans-serif"
@@ -246,7 +308,7 @@ function Landing(props) {
 							}}
 						></div>
 						<Typography
-							variant="h5"
+							variant='h5'
 							fontWeight={600}
 							fontFamily={
 								"Inter,'Roboto','Helvetica','Arial',sans-serif"
@@ -281,7 +343,7 @@ function Landing(props) {
 							}}
 						></div>
 						<Typography
-							variant="h5"
+							variant='h5'
 							fontWeight={600}
 							fontFamily={
 								"Inter,'Roboto','Helvetica','Arial',sans-serif"
@@ -322,12 +384,12 @@ function Landing(props) {
 					>
 						<Grid item md={5}>
 							<Typography
-								variant="h1"
+								variant='h1'
 								fontSize={"3.5rem"}
 								fontWeight={600}
 								textAlign={"left"}
 								mb={"1.5rem"}
-								px={{xs:"1rem",md:"0rem"}}
+								px={{ xs: "1rem", md: "0rem" }}
 							>
 								<span
 									style={{
@@ -341,20 +403,23 @@ function Landing(props) {
 								</span>
 								{" are on the way."}
 							</Typography>
-							<Typography variant="body1" px={{xs:"1.5rem",md:"0rem"}}>
+							<Typography
+								variant='body1'
+								px={{ xs: "1.5rem", md: "0rem" }}
+							>
 								Our LLM Ops tool will be launched soon. So, keep
 								an eye out for that.
 							</Typography>
 						</Grid>
 						<Grid item md={7}>
 							<img
-								alt="product"
-								loading="lazy"
-								src="https://d1pnnwteuly8z3.cloudfront.net/images/34042e2f-f9e4-4d41-97b0-9005b9f6513e/57a9ea1c-beb2-48b0-8a4f-5c7d12ad067f.png"
+								alt='product'
+								loading='lazy'
+								src='https://d1pnnwteuly8z3.cloudfront.net/images/34042e2f-f9e4-4d41-97b0-9005b9f6513e/57a9ea1c-beb2-48b0-8a4f-5c7d12ad067f.png'
 							/>
 						</Grid>
 					</Grid>
-					<Grid container display="flex">
+					<Grid container display='flex'>
 						<Grid item md={4} mb={"1rem"} px={"1.25rem"}>
 							<Stack
 								direction={"row"}
@@ -362,7 +427,7 @@ function Landing(props) {
 								alignItems={"center"}
 							>
 								<AttractionsOutlined
-									fontSize="large"
+									fontSize='large'
 									sx={{ color: "#1d4ed8" }}
 								></AttractionsOutlined>
 								<Typography
@@ -386,7 +451,7 @@ function Landing(props) {
 								alignItems={"center"}
 							>
 								<History
-									fontSize="large"
+									fontSize='large'
 									sx={{ color: "#1d4ed8" }}
 								></History>
 								<Typography
@@ -410,7 +475,7 @@ function Landing(props) {
 								alignItems={"center"}
 							>
 								<InsertChartOutlined
-									fontSize="large"
+									fontSize='large'
 									sx={{ color: "#1d4ed8" }}
 								></InsertChartOutlined>
 								<Typography
@@ -431,19 +496,19 @@ function Landing(props) {
 				</Stack>
 			</Box>
 			<Stack direction={"column"}>
-				<Grid container spacing={2} mb="3rem">
+				<Grid container spacing={2} mb='3rem'>
 					<Grid item md={3} xs={12}>
 						<Stack direction={"column"}>
 							<Typography
-								variant="h5"
+								variant='h5'
 								fontWeight={600}
-								align="center"
-								mb="0.75rem"
+								align='center'
+								mb='0.75rem'
 								color={"#1d4ed8"}
 							>
 								Puddl
 							</Typography>
-							<Typography align="center">
+							<Typography align='center'>
 								Track your OpenAI costs for free.
 							</Typography>
 						</Stack>
@@ -451,10 +516,10 @@ function Landing(props) {
 					<Grid item md={3} xs={12}>
 						<Stack direction={"column"}>
 							<Typography
-								variant="body1"
+								variant='body1'
 								fontWeight={600}
-								align="center"
-								mb="0.75rem"
+								align='center'
+								mb='0.75rem'
 							>
 								Product
 							</Typography>
@@ -471,10 +536,10 @@ function Landing(props) {
 					<Grid item md={3} xs={12}>
 						<Stack direction={"column"}>
 							<Typography
-								variant="body1"
+								variant='body1'
 								fontWeight={600}
-								align="center"
-								mb="0.75rem"
+								align='center'
+								mb='0.75rem'
 							>
 								Company
 							</Typography>
@@ -488,17 +553,17 @@ function Landing(props) {
 					<Grid item md={3} xs={12}>
 						<Stack direction={"column"}>
 							<Typography
-								variant="body1"
+								variant='body1'
 								fontWeight={600}
-								align="center"
-								mb="0.75rem"
+								align='center'
+								mb='0.75rem'
 							>
 								Connect With Us
 							</Typography>
 							<a
-								href="https://twitter.com/Puddl_LLMOps"
-								target="_blank"
-								rel="noreferrer"
+								href='https://twitter.com/Puddl_LLMOps'
+								target='_blank'
+								rel='noreferrer'
 							>
 								<Twitter
 									sx={{
@@ -511,7 +576,7 @@ function Landing(props) {
 						</Stack>
 					</Grid>
 				</Grid>
-				<Typography variant="body2" align="center" mb="3rem">
+				<Typography variant='body2' align='center' mb='3rem'>
 					© 2023 Puddl Inc. All rights reserved.
 				</Typography>
 			</Stack>

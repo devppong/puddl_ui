@@ -272,9 +272,6 @@ export const updateFilters = async (dispatch, state, filters) => {
 	let { selectedUser } = state;
 	if (selectedUser === "All Users") {
 		let { chart_data, comp_chart_data, subscription_data } = state;
-		while (!chart_data) {
-			await new Promise((resolve) => setTimeout(resolve, 100));
-		}
 		let { conversion } = subscription_data;
 		// console.log(filters);
 		parseChartData(
@@ -298,16 +295,19 @@ export const updateFilters = async (dispatch, state, filters) => {
 	}
 };
 
-export const updateSelectedUser = async(dispatch, state, selectedUser) => {
+export const updateSelectedUser = async (dispatch, state, selectedUser) => {
 	dispatch({
 		type: "UPDATE_SELECTED_USER",
 		payload: selectedUser,
 		fieldName: "selectedUser",
 	});
-	let { chart_data, comp_chart_data, filters, subscription_data } = state;
-	while (!chart_data) {
-		await new Promise((resolve) => setTimeout(resolve, 100));
-	}
+	let {
+		chart_data,
+		comp_chart_data,
+		filters,
+		subscription_data,
+		date_range,
+	} = state;
 	let { conversion } = subscription_data;
 	if (selectedUser === "All Users") {
 		parseChartData(
@@ -320,7 +320,13 @@ export const updateSelectedUser = async(dispatch, state, selectedUser) => {
 		let { kpi_data } = state;
 		parseKPIData(dispatch, kpi_data);
 	} else {
+		console.log(selectedUser);
 		let { user_level_data } = state;
+		console.log(user_level_data);
+		if (!user_level_data) {
+			Promise.all(await getUserLevelMetrics(dispatch,state,date_range));
+		}
+		console.log(user_level_data);
 		parseUserLevelData(
 			dispatch,
 			state,
@@ -368,6 +374,7 @@ export const updateSelectedCurrency = async (state, dispatch, value) => {
 };
 
 export const getCostMetrics = async (dispatch, state, date_range) => {
+	console.log('getCostMetrics');
 	let start_date = moment(date_range[0]).format("YYYY-MM-DD");
 	let end_date = moment(date_range[0]).add("1", "days").format("YYYY-MM-DD");
 	if (date_range[1]) {
