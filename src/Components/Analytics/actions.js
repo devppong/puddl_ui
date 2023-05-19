@@ -1112,8 +1112,9 @@ export const parseChartData = (
 ) => {
 	let daily_costs =
 		chart_data && chart_data.daily_costs ? chart_data.daily_costs : [];
-	let total_usage =
-		chart_data && chart_data.total_usage ? chart_data.total_usage : 0;
+	// let total_usage =
+	// 	chart_data && chart_data.total_usage ? chart_data.total_usage : 0;
+	let total_usage = 0;
 	let bar_chart_data = [];
 	let donut_chart_data = [];
 	let donut_map = {};
@@ -1126,8 +1127,10 @@ export const parseChartData = (
 		obj["topic"] = timestamp;
 		for (let j = 0; j < line_items.length; j++) {
 			let { name, cost } = line_items[j];
+
 			if (filters.indexOf(name) > -1) {
 				obj[name] = (cost / 100) * exchangeRate;
+				total_usage += obj[name];
 				if (donut_map[name]) {
 					donut_map[name] =
 						donut_map[name] + (cost / 100) * exchangeRate;
@@ -1145,13 +1148,15 @@ export const parseChartData = (
 		obj["cost"] = value;
 		donut_chart_data.push(obj);
 	}
-
-	if (!total_usage || total_usage <= 0) total_usage = 0;
-	else total_usage = ((total_usage / 100) * exchangeRate).toFixed(2);
+	console.log(total_usage);
+	total_usage = total_usage.toFixed(2);
+	// if (!total_usage || total_usage <= 0) total_usage = 0;
+	// else total_usage = ((total_usage / 100) * exchangeRate).toFixed(2);
 	let comp_total_usage =
 		comp_chart_data && comp_chart_data.total_usage
 			? comp_chart_data.total_usage
 			: 0;
+
 	comp_total_usage = ((comp_total_usage / 100) * exchangeRate).toFixed(2);
 	// check percentage change of total usage
 	let percentage_change = 0;
