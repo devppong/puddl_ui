@@ -45,10 +45,10 @@ const renderCard = (value, state) => {
 			<div className="max-w-lg">
 				<Flex className="mt-4">
 					<Text>
-						<Bold>Model</Bold>
+						<Bold>User</Bold>
 					</Text>
 					<Text>
-						<Bold>Requests</Bold>
+						<Bold>Tokens</Bold>
 					</Text>
 				</Flex>
 				<BarList data={data} className="mt-2" />
@@ -63,10 +63,10 @@ const renderCard = (value, state) => {
 			<div className="max-w-lg">
 				<Flex className="mt-4">
 					<Text>
-						<Bold>Model</Bold>
+						<Bold>User</Bold>
 					</Text>
 					<Text>
-						<Bold>Requests</Bold>
+						<Bold>Tokens</Bold>
 					</Text>
 				</Flex>
 				<BarList data={data} className="mt-2" />
