@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
 	Col,
 	Grid,
@@ -83,6 +83,7 @@ export default function Analytics() {
 	const [OrgID, setOrgID] = useState("");
 	const [selectedUser, setselectedUser] = useState("All Users");
 	const [selectedUSD, setSelectedUSD] = useState("All Users");
+	const orgIdRef = useRef();
 
 	const handleUpdateFilters = (value) => {
 		updateFilters(dispatch, state, value);
@@ -306,6 +307,7 @@ export default function Analytics() {
 							value={OrgID}
 							size='large'
 							style={{ width: "320px" }}
+							ref = {orgIdRef}
 						/>
 						<sub
 							style={{
@@ -372,11 +374,13 @@ export default function Analytics() {
 							<Typography
 								variant='body1'
 								onClick={() => {
-									let ele =
-										document.getElementById(
-											"analytics-top"
-										);
-									ele.scrollIntoView();
+									// let ele =
+									// 	document.getElementById(
+									// 		"analytics-top"
+									// 	);
+									// ele.scrollIntoView();
+									console.log(orgIdRef.current)
+									orgIdRef.current.input.focus();
 								}}
 								sx={{
 									color: "#da552f",
