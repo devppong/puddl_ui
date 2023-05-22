@@ -379,7 +379,6 @@ export default function Analytics() {
 									// 		"analytics-top"
 									// 	);
 									// ele.scrollIntoView();
-									console.log(orgIdRef.current)
 									orgIdRef.current.input.focus();
 								}}
 								sx={{
