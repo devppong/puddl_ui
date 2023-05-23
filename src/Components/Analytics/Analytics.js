@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
 	Col,
 	Grid,
@@ -83,6 +83,7 @@ export default function Analytics() {
 	const [OrgID, setOrgID] = useState("");
 	const [selectedUser, setselectedUser] = useState("All Users");
 	const [selectedUSD, setSelectedUSD] = useState("All Users");
+	const orgIdRef = useRef();
 
 	const handleUpdateFilters = (value) => {
 		updateFilters(dispatch, state, value);
@@ -154,7 +155,7 @@ export default function Analytics() {
 				{apiKeyStatus === "success" ? (
 					<Badge
 						className='max-w-sm '
-						color='green'
+						color={state.user_level_costs ? "green" : "red"}
 						style={{ margin: "10px" }}
 					>
 						<span
@@ -170,7 +171,11 @@ export default function Analytics() {
 							>
 								<StatusOnlineIcon />
 							</span>
-							<span className='ml-2'>Active</span>
+							<span className='ml-2'>
+								{state.user_level_costs
+									? "Active"
+									: "Some of OpenAI's Cost APIs are down"}
+							</span>
 						</span>
 					</Badge>
 				) : (
@@ -306,6 +311,7 @@ export default function Analytics() {
 							value={OrgID}
 							size='large'
 							style={{ width: "320px" }}
+							ref={orgIdRef}
 						/>
 						<sub
 							style={{
@@ -361,7 +367,7 @@ export default function Analytics() {
 				</Col>
 			</Grid>
 
-			{selectedUser === "All Users" && (
+			{selectedUser === "All Users" && state.org_users.length > 1 && (
 				<>
 					<Typography
 						variant='h4'
@@ -372,11 +378,12 @@ export default function Analytics() {
 							<Typography
 								variant='body1'
 								onClick={() => {
-									let ele =
-										document.getElementById(
-											"analytics-top"
-										);
-									ele.scrollIntoView();
+									// let ele =
+									// 	document.getElementById(
+									// 		"analytics-top"
+									// 	);
+									// ele.scrollIntoView();
+									orgIdRef.current.input.focus();
 								}}
 								sx={{
 									color: "#da552f",

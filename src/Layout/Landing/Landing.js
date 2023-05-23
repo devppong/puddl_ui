@@ -18,6 +18,7 @@ import {
 	Twitter,
 } from "@mui/icons-material";
 import "./Landing.css";
+import { Flex } from "@tremor/react";
 function Landing(props) {
 	const el = useRef(null);
 
@@ -87,14 +88,34 @@ function Landing(props) {
 			</Toolbar>
 
 			<Box sx={{ textAlign: "center", paddingY: "7rem" }}>
-				<Typography
-					variant='h6'
-					sx={{
-						color: "#da552f",
-					}}
-				>
-					We're live on Product Hunt!
-				</Typography>
+				<Flex justifyContent='center' style={{ gap: "1rem", flexWrap: "wrap" }}>
+					<a
+						href='https://www.producthunt.com/posts/puddl-3?utm_source=badge-top-post-badge&utm_medium=badge&utm_souce=badge-puddl&#0045;3'
+						target='_blank'
+						rel='noreferrer'
+					>
+						<img
+							src='https://api.producthunt.com/widgets/embed-image/v1/top-post-badge.svg?post_id=392737&theme=light&period=daily'
+							alt='Puddl - Get&#0032;complete&#0032;breakdown&#0032;of&#0032;OpenAI&#0032;API&#0032;usage&#0032;for&#0032;free | Product Hunt'
+							style={{ width: "250px", height: "54px" }}
+							width='250'
+							height='54'
+						/>
+					</a>
+					<a
+						href='https://www.producthunt.com/posts/puddl-3?utm_source=badge-top-post-topic-badge&utm_medium=badge&utm_souce=badge-puddl&#0045;3'
+						target='_blank'
+						rel='noreferrer'
+					>
+						<img
+							src='https://api.producthunt.com/widgets/embed-image/v1/top-post-topic-badge.svg?post_id=392737&theme=light&period=weekly&topic_id=267'
+							alt='Puddl - Get&#0032;complete&#0032;breakdown&#0032;of&#0032;OpenAI&#0032;API&#0032;usage&#0032;for&#0032;free | Product Hunt'
+							style={{ width: "250px", height: "54px" }}
+							width='250'
+							height='54'
+						/>
+					</a>
+				</Flex>
 				<a
 					href='https://www.producthunt.com/posts/puddl-3?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-puddl&#0045;3'
 					target='_blank'
@@ -102,7 +123,7 @@ function Landing(props) {
 					style={{
 						display: "block",
 						width: "250px",
-						margin: "0.5rem auto 1.5rem auto",
+						margin: "1rem auto 1.5rem auto",
 					}}
 				>
 					<img
@@ -113,6 +134,7 @@ function Landing(props) {
 						height='54'
 					/>
 				</a>
+
 				<Typography
 					variant='h2'
 					sx={{
