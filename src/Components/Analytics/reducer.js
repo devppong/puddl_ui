@@ -132,6 +132,12 @@ export default function reducer(state, action) {
 				[action.fieldName]: action.payload,
 			};
 		}
+		case "USER_LEVEL_COSTS_LOADED": {
+			return {
+				...state,
+				[action.fieldName]: action.payload,
+			};
+		}
 		case "UPDATE_USER_REQUESTS": {
 			return {
 				...state,

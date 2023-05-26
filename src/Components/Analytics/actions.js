@@ -952,6 +952,14 @@ export const parseUserLevelData = (
 			cost: calculateOpenAICost(usageArray[userUsage]) * conversion,
 		});
 	}
+
+	if (!user_level_costs) {
+		dispatch({
+			type: "USER_LEVEL_COSTS_LOADED",
+			payload: false,
+			fieldName: "user_level_costs_loaded",
+		});
+	}
 	// console.log(user_level_costs);
 	dispatch({
 		type: "UPDATE_USER_LEVEL_COSTS",

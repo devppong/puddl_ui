@@ -75,6 +75,7 @@ export default function Analytics() {
 		selectedUser: "All Users",
 		selectedUSD: false,
 		user_level_data: [],
+		user_level_costs_loaded: true,
 	};
 
 	const [state, dispatch] = useReducer(reducer, initialState);
@@ -172,7 +173,7 @@ export default function Analytics() {
 								<StatusOnlineIcon />
 							</span>
 							<span className='ml-2'>
-								{state.user_level_costs
+								{state.user_level_costs_loaded
 									? "Active"
 									: "Some of OpenAI's Cost APIs are down"}
 							</span>
