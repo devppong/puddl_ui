@@ -156,7 +156,7 @@ export default function Analytics() {
 				{apiKeyStatus === "success" ? (
 					<Badge
 						className='max-w-sm '
-						color={state.user_level_costs ? "green" : "red"}
+						color={state.user_level_costs_loaded ? "green" : "red"}
 						style={{ margin: "10px" }}
 					>
 						<span
