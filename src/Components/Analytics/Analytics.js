@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useDeferredValue } from "react";
 import {
 	Col,
 	Grid,
@@ -81,7 +81,9 @@ export default function Analytics() {
 	const [state, dispatch] = useReducer(reducer, initialState);
 	const [apiKeyStatus, setApiKeyStatus] = useState("error");
 	const [apiKey, setApiKey] = useState("");
+	const deferredKey = useDeferredValue(apiKey);
 	const [OrgID, setOrgID] = useState("");
+	const deferredOrgID = useDeferredValue(OrgID);
 	const [selectedUser, setselectedUser] = useState("All Users");
 	const [selectedUSD, setSelectedUSD] = useState("All Users");
 	const orgIdRef = useRef();
@@ -99,32 +101,15 @@ export default function Analytics() {
 		setselectedUser(value);
 	};
 
-	const onChangekey = async (e) => {
-		let key = e.target.value;
-		let isApiKeyValid = false;
-		try {
-			isApiKeyValid = await validateApiKey(key);
-		} catch (e) {
-			//console.log(e);
-		}
+	// const onChangekey = async (e) => {
+	// 	let key = e.target.value;
+	// 	setApiKey(key);
+	// 	console.log(key);
+	// };
 
-		if (isApiKeyValid) {
-			localStorage.setItem("openAiKey", key);
-			console.log("valid key");
-			setApiKeyStatus("success");
-		} else {
-			console.log("invalid key");
-			setApiKeyStatus("error");
-		}
-		setApiKey(key);
-		updateApiKey(dispatch, state, key);
-	};
+	// const onChangeOrgID = async (e) => {
 
-	const onChangeOrgID = async (e) => {
-		localStorage.setItem("openAiOrgID", e.target.value);
-		setOrgID(e.target.value);
-		updateOrgID(dispatch, state, e.target.value);
-	};
+	// };
 	//animate-ping bg-red-50 opacity-75
 
 	useEffect(() => {
@@ -141,6 +126,44 @@ export default function Analytics() {
 			setOrgID(org_id);
 		}
 	}, []);
+
+	useEffect(() => {
+		const delay = 500;
+		const timer = setTimeout(async () => {
+			let isApiKeyValid = false;
+			try {
+				isApiKeyValid = await validateApiKey(deferredKey);
+			} catch (e) {
+				//console.log(e);
+			}
+
+			if (isApiKeyValid) {
+				localStorage.setItem("openAiKey", deferredKey);
+				console.log("valid key");
+				setApiKeyStatus("success");
+				updateApiKey(dispatch, state, deferredKey);
+			} else {
+				console.log("invalid key");
+				setApiKeyStatus("error");
+			}
+		}, delay);
+
+		return () => {
+			clearTimeout(timer);
+		};
+	}, [deferredKey]);
+
+	useEffect(() => {
+		const delay = 500;
+		const timer = setTimeout(async () => {
+			localStorage.setItem("openAiOrgID", deferredOrgID);
+			updateOrgID(dispatch, state, deferredOrgID);
+		}, delay);
+
+		return () => {
+			clearTimeout(timer);
+		};
+	}, [deferredOrgID]);
 
 	return (
 		<main className='bg-slate-50 p-6 sm:p-10 w-min-full'>
@@ -277,7 +300,9 @@ export default function Analytics() {
 							status={apiKeyStatus}
 							className='max-w-sm'
 							placeholder='OpenAI key(stored locally)'
-							onChange={onChangekey}
+							onChange={(e) => {
+								setApiKey(e.target.value);
+							}}
 							value={apiKey}
 							size='large'
 							style={{ width: "320px" }}
@@ -308,7 +333,7 @@ export default function Analytics() {
 						<Input.Password
 							className='max-w-sm'
 							placeholder='OrgID(stored locally)'
-							onChange={onChangeOrgID}
+							onChange={(e) => setOrgID(e.target.value)}
 							value={OrgID}
 							size='large'
 							style={{ width: "320px" }}
