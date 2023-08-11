@@ -113,21 +113,23 @@ export default function Analytics() {
 	//animate-ping bg-red-50 opacity-75
 
 	useEffect(() => {
+		console.log("local storage");
 		// This will be called after the component mounts
 		let api_key = localStorage.getItem("openAiKey");
 		let org_id = localStorage.getItem("openAiOrgID");
 		if (api_key) {
 			setApiKeyStatus("success");
-			updateApiKey(dispatch, state, api_key);
+			// updateApiKey(dispatch, state, api_key);
 			setApiKey(api_key);
 		}
 		if (org_id) {
-			updateOrgID(dispatch, state, org_id);
+			// updateOrgID(dispatch, state, org_id);
 			setOrgID(org_id);
 		}
 	}, []);
 
 	useEffect(() => {
+		console.log("deferred key:", deferredKey);
 		const delay = 500;
 		const timer = setTimeout(async () => {
 			let isApiKeyValid = false;

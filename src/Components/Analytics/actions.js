@@ -2,6 +2,8 @@ import axios from "axios";
 import moment from "moment";
 const countries = require("iso-country-currency");
 const prompt_api_url = "https://puddlapi.puddl.io/prompt";
+let date_range_timer_on = 0;
+let dateRangeTimerId;
 
 const getOpenAIHeaders = (token) => {
 	const headers = {
@@ -219,7 +221,7 @@ const axiosGet = async (url, headers) => {
 		if (response.status === 200) return response.data;
 		else return null;
 	} catch (error) {
-		return null;
+		return error.response.status;
 	}
 };
 
@@ -231,7 +233,10 @@ export const updateApiKey = async (dispatch, state, key) => {
 	});
 	state.api_key = key;
 	await getSubscriptionData(dispatch, state);
-	await updateDateRange(dispatch, state, state.date_range);
+	date_range_timer_on = 1;
+	dateRangeTimerId = setTimeout(async () => {
+		await updateDateRange(dispatch, state, state.date_range);
+	}, 500);
 };
 
 export const updateOrgID = async (dispatch, state, key) => {
@@ -241,7 +246,11 @@ export const updateOrgID = async (dispatch, state, key) => {
 		payload: key,
 	});
 	state.org_id = key;
-	await updateDateRange(dispatch, state, state.date_range);
+	if (date_range_timer_on) {
+		date_range_timer_on = 0;
+		clearTimeout(dateRangeTimerId);
+		await updateDateRange(dispatch, state, state.date_range);
+	}
 };
 
 export const updateDateRange = async (dispatch, state, date_range) => {
@@ -273,7 +282,6 @@ export const updateFilters = async (dispatch, state, filters) => {
 	if (selectedUser === "All Users") {
 		let { chart_data, comp_chart_data, subscription_data } = state;
 		let { conversion } = subscription_data;
-		// console.log(filters);
 		parseChartData(
 			dispatch,
 			chart_data,
@@ -378,7 +386,7 @@ export const getCostMetrics = async (dispatch, state, date_range) => {
 	let end_date = moment(date_range[0]).add("1", "days").format("YYYY-MM-DD");
 	if (date_range[1]) {
 		end_date = moment(date_range[1]).format("YYYY-MM-DD");
-		if (start_date == end_date) {
+		if (start_date === end_date) {
 			end_date = moment(date_range[1])
 				.add("1", "days")
 				.format("YYYY-MM-DD");
@@ -412,7 +420,7 @@ function getCompDateRange(date_range) {
 	let end_date = moment(date_range[0]).add("1", "days").format("YYYY-MM-DD");
 	if (date_range[1]) {
 		end_date = moment(date_range[1]).format("YYYY-MM-DD");
-		if (start_date == end_date) {
+		if (start_date === end_date) {
 			end_date = moment(date_range[1])
 				.add("1", "days")
 				.format("YYYY-MM-DD");
@@ -510,26 +518,57 @@ export const getUserLevelMetrics = async (
 };
 
 export const getKPIMetrics = async (dispatch, state, date_range) => {
+	console.log("KPI metrics");
 	let start_date = moment(date_range[0]).format("YYYY-MM-DD");
 	let end_date = moment(date_range[0]).add("1", "days").format("YYYY-MM-DD");
 	if (date_range[1]) {
 		end_date = moment(date_range[1]).format("YYYY-MM-DD");
-		if (start_date == end_date) {
+		if (start_date === end_date) {
 			end_date = moment(date_range[1])
 				.add("1", "days")
 				.format("YYYY-MM-DD");
 		}
 	}
 	const datesInRange = getAllDatesInRange(start_date, end_date);
-	let promise_array = [];
+	// let promise_array = [];
 	let token = getToken(state);
 	let headers = getOpenAIHeaders(token ? token : "");
-	datesInRange.forEach((date) => {
+	let kpi_data = [];
+	let kpi_retries = [];
+	for (const date of datesInRange) {
+		await new Promise((resolve) => setTimeout(resolve, 12000));
 		let url = `https://api.openai.com/v1/usage?date=${date}`;
-		promise_array.push(axiosGet(url, headers));
-	});
-	let kpi_data = await Promise.all(promise_array);
+		let respo = await axiosGet(url, headers);
+		console.log("respo: ", respo);
+		if (respo === 429) {
+			kpi_retries.push(url);
+		} else {
+			kpi_data.push(respo);
+		}
+	}
+	while (kpi_retries.length) {
+		console.log("kpi_retries: ", kpi_retries);
+		let retryUrl = kpi_retries[0];
+		kpi_retries.shift();
+		await new Promise((resolve) => setTimeout(resolve, 12000));
+		let respo = await axiosGet(retryUrl, headers);
+		console.log("respo: ", respo);
+		if (respo === 429) {
+			kpi_retries.push(retryUrl);
+		} else {
+			kpi_data.push(respo);
+		}
+	}
+	// datesInRange.forEach(async (date) => {
+	// 	let url = `https://api.openai.com/v1/usage?date=${date}`;
+	// 	// promise_array.push(axiosGet(url, headers));
+	// 	let respo = await axiosGet(url, headers);
+	// 	console.log("respo: ", respo);
+	// 	await new Promise((resolve) => setTimeout(resolve, 1000));
+	// });
+	// let kpi_data = await Promise.all(promise_array);
 	if (!kpi_data) return;
+	console.log("kpi_data: ", kpi_data);
 	dispatch({
 		type: "UPDATE_KPI_DATA",
 		payload: kpi_data,

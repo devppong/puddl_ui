@@ -88,7 +88,10 @@ function Landing(props) {
 			</Toolbar>
 
 			<Box sx={{ textAlign: "center", paddingY: "7rem" }}>
-				<Flex justifyContent='center' style={{ gap: "1rem", flexWrap: "wrap" }}>
+				<Flex
+					justifyContent='center'
+					style={{ gap: "1rem", flexWrap: "wrap" }}
+				>
 					<a
 						href='https://www.producthunt.com/posts/puddl-3?utm_source=badge-top-post-badge&utm_medium=badge&utm_souce=badge-puddl&#0045;3'
 						target='_blank'
@@ -222,9 +225,9 @@ function Landing(props) {
 						<img
 							class='block mx-auto lg:mr-0 pr-6 lg:max-w-[500px]'
 							src={"https://i.imgur.com/8sf2Is2.png"}
-							style={{
-								filter: "drop-shadow(0.5rem 0.5rem 0.25rem rgba(0, 0, 0, 0.075))",
-							}}
+							// style={{
+							// 	filter: "drop-shadow(0.5rem 0.5rem 0.25rem rgba(0, 0, 0, 0.075))",
+							// }}
 							width='500'
 							height='370'
 							alt='product image'
