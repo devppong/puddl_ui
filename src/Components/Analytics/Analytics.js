@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useDeferredValue } from "react";
+import "./Analytics.css";
 import {
 	Col,
 	Grid,
@@ -9,6 +10,8 @@ import {
 	SelectBoxItem,
 	Toggle,
 	ToggleItem,
+	Card,
+	Text,
 } from "@tremor/react";
 import { Badge } from "@tremor/react";
 import { MultiSelectBox, MultiSelectBoxItem } from "@tremor/react";
@@ -76,6 +79,7 @@ export default function Analytics() {
 		selectedUSD: false,
 		user_level_data: [],
 		user_level_costs_loaded: true,
+		api_eta: 0,
 	};
 
 	const [state, dispatch] = useReducer(reducer, initialState);
@@ -86,6 +90,7 @@ export default function Analytics() {
 	const deferredOrgID = useDeferredValue(OrgID);
 	const [selectedUser, setselectedUser] = useState("All Users");
 	const [selectedUSD, setSelectedUSD] = useState("All Users");
+	const [eta_timer, setETA_Timer] = useState("00:00");
 	const orgIdRef = useRef();
 
 	const handleUpdateFilters = (value) => {
@@ -117,6 +122,7 @@ export default function Analytics() {
 		// This will be called after the component mounts
 		let api_key = localStorage.getItem("openAiKey");
 		let org_id = localStorage.getItem("openAiOrgID");
+		updateETA_Timer();
 		if (api_key) {
 			setApiKeyStatus("success");
 			// updateApiKey(dispatch, state, api_key);
@@ -128,8 +134,28 @@ export default function Analytics() {
 		}
 	}, []);
 
+	const updateETA_Timer = () => {
+		// console.log("timer: ", state.api_eta);
+		// if (state.api_eta <= 0) {
+		// 	setETA_Timer("00:00");
+		// } else {
+		// 	var minutes = Math.floor(state.api_eta / 60);
+		// 	var seconds = state.api_eta % 60;
+		// 	if (seconds < 10 && minutes < 10)
+		// 		setETA_Timer(`0${minutes}:0${seconds}`);
+		// 	else if (seconds < 10 || minutes > 9)
+		// 		setETA_Timer(`${minutes}:0${seconds}`);
+		// 	else setETA_Timer(`${minutes}:${seconds}`);
+		// }
+		// // dispatch({
+		// // 	type: "UPDATE_API_ETA",
+		// // 	payload: state.api_eta - 1,
+		// // 	fieldName: "api_eta",
+		// // });
+		// setTimeout(updateETA_Timer, 1000);
+	};
+
 	useEffect(() => {
-		console.log("deferred key:", deferredKey);
 		const delay = 500;
 		const timer = setTimeout(async () => {
 			let isApiKeyValid = false;
@@ -169,6 +195,15 @@ export default function Analytics() {
 
 	return (
 		<main className='bg-slate-50 p-6 sm:p-10 w-min-full'>
+			{/* <Flex
+				style={{
+					alignItems: "flex-start",
+					justifyContent: "center",
+					marginBottom: "20px",
+				}}
+			>
+				<div className='timer_card'>{eta_timer}</div>
+			</Flex> */}
 			<Flex
 				style={{
 					alignItems: "center",
@@ -373,24 +408,36 @@ export default function Analytics() {
 					<ToggleItem value={false} text='Local Currency' />
 				</Toggle>
 			</Flex>
+
 			<Grid numColsLg={3} className='mt-6 gap-6 h-full'>
-				<Col numColSpanLg={2}>
+				<Col numColSpanLg={2} className='loading-spinner-container'>
+					<div
+						className='loading-spinner'
+						id='bar_chart_analytics'
+					></div>
 					{<Barchart state={state} dispatch={dispatch} />}
 				</Col>
-				<Col numColSpanLg={1}>
+				<Col numColSpanLg={1} className='loading-spinner-container'>
+					<div className='loading-spinner'></div>
 					<Linechart state={state} dispatch={dispatch} />
 				</Col>
 			</Grid>
 
 			{/* {<Barchart state={state} dispatch={dispatch} />} */}
 			<Grid numColsLg={3} className='mt-6 gap-6'>
-				<Col numColSpanLg={1}>
+				<Col numColSpanLg={1} className='loading-spinner-container'>
+					<div
+						className='loading-spinner'
+						id='donut_chart_analytics'
+					></div>
 					<Donutchart state={state} dispatch={dispatch} />
 				</Col>
-				<Col numColSpanLg={1}>
+				<Col numColSpanLg={1} className='loading-spinner-container'>
+					<div className='loading-spinner'></div>
 					<CompUIReq state={state} dispatch={dispatch} />
 				</Col>
-				<Col numColSpanLg={1}>
+				<Col numColSpanLg={1} className='loading-spinner-container'>
+					<div className='loading-spinner'></div>
 					<CompUITok state={state} dispatch={dispatch} />
 				</Col>
 			</Grid>

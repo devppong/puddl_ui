@@ -535,6 +535,13 @@ export const getKPIMetrics = async (dispatch, state, date_range) => {
 	let headers = getOpenAIHeaders(token ? token : "");
 	let kpi_data = [];
 	let kpi_retries = [];
+	let api_eta = datesInRange.length * 12;
+	console.log("timer__:", api_eta);
+	dispatch({
+		type: "UPDATE_API_ETA",
+		payload: api_eta,
+		fieldName: "api_eta",
+	});
 	for (const date of datesInRange) {
 		await new Promise((resolve) => setTimeout(resolve, 12000));
 		let url = `https://api.openai.com/v1/usage?date=${date}`;
@@ -542,6 +549,12 @@ export const getKPIMetrics = async (dispatch, state, date_range) => {
 		console.log("respo: ", respo);
 		if (respo === 429) {
 			kpi_retries.push(url);
+			api_eta += 12;
+			dispatch({
+				type: "UPDATE_API_ETA",
+				payload: api_eta,
+				fieldName: "api_eta",
+			});
 		} else {
 			kpi_data.push(respo);
 		}
@@ -555,6 +568,12 @@ export const getKPIMetrics = async (dispatch, state, date_range) => {
 		console.log("respo: ", respo);
 		if (respo === 429) {
 			kpi_retries.push(retryUrl);
+			api_eta += 12;
+			dispatch({
+				type: "UPDATE_API_ETA",
+				payload: api_eta,
+				fieldName: "api_eta",
+			});
 		} else {
 			kpi_data.push(respo);
 		}
@@ -569,6 +588,10 @@ export const getKPIMetrics = async (dispatch, state, date_range) => {
 	// let kpi_data = await Promise.all(promise_array);
 	if (!kpi_data) return;
 	console.log("kpi_data: ", kpi_data);
+	var cols = document.getElementsByClassName("loading-spinner");
+	for (let i = 0; i < cols.length; i++) {
+		cols[i].style.display = "none";
+	}
 	dispatch({
 		type: "UPDATE_KPI_DATA",
 		payload: kpi_data,
@@ -1188,6 +1211,7 @@ export const parseChartData = (
 	let donut_chart_data = [];
 	let donut_map = {};
 	let exchangeRate = conversion ? conversion : 1;
+
 	for (let i = 0; i < daily_costs.length; i++) {
 		let obj = {};
 		let { timestamp, line_items } = daily_costs[i];
@@ -1234,6 +1258,9 @@ export const parseChartData = (
 			((total_usage - comp_total_usage) / comp_total_usage) * 100;
 		percentage_change = percentage_change.toFixed(2);
 	}
+
+	document.getElementById("bar_chart_analytics").style.display = "none";
+	document.getElementById("donut_chart_analytics").style.display = "none";
 
 	dispatch({
 		type: "UPDATE_TOTAL_USAGE",
