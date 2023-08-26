@@ -38,6 +38,7 @@ import { Typography } from "@mui/material";
 import UserLevelCost from "./charts/UserLevelCost";
 import UserLevelRequests from "./charts/UserLevelRequests";
 import UserLevelTokens from "./charts/UserLevelTokens";
+let shownTimer;
 export default function Analytics() {
 	const initialState = {
 		data: {},
@@ -118,12 +119,12 @@ export default function Analytics() {
 	//animate-ping bg-red-50 opacity-75
 
 	useEffect(() => {
-		console.log("local storage");
+		// console.log("local storage");
 		// This will be called after the component mounts
 		let api_key = localStorage.getItem("openAiKey");
 		let org_id = localStorage.getItem("openAiOrgID");
-		updateETA_Timer();
 		if (api_key) {
+			// console.log("api_key:", api_key);
 			setApiKeyStatus("success");
 			// updateApiKey(dispatch, state, api_key);
 			setApiKey(api_key);
@@ -134,28 +135,69 @@ export default function Analytics() {
 		}
 	}, []);
 
-	const updateETA_Timer = () => {
-		// console.log("timer: ", state.api_eta);
-		// if (state.api_eta <= 0) {
-		// 	setETA_Timer("00:00");
-		// } else {
-		// 	var minutes = Math.floor(state.api_eta / 60);
-		// 	var seconds = state.api_eta % 60;
-		// 	if (seconds < 10 && minutes < 10)
-		// 		setETA_Timer(`0${minutes}:0${seconds}`);
-		// 	else if (seconds < 10 || minutes > 9)
-		// 		setETA_Timer(`${minutes}:0${seconds}`);
-		// 	else setETA_Timer(`${minutes}:${seconds}`);
-		// }
-		// // dispatch({
-		// // 	type: "UPDATE_API_ETA",
-		// // 	payload: state.api_eta - 1,
-		// // 	fieldName: "api_eta",
-		// // });
-		// setTimeout(updateETA_Timer, 1000);
+	useEffect(() => {
+		updateETA_Timer();
+	}, [state.api_eta]);
+
+	const updateETA_Timer = async () => {
+		if (shownTimer) {
+			clearInterval(shownTimer);
+		}
+		shownTimer = setInterval(() => {
+			if (state.api_eta < 0) {
+				clearInterval(shownTimer);
+			} else {
+				showTime(state.api_eta);
+				dispatch({
+					type: "DEL_API_ETA",
+					payload: 1,
+					fieldName: "api_eta",
+				});
+			}
+		}, 1000);
 	};
 
+	const showTime = (value) => {
+		if (!value) {
+			setETA_Timer("00:00");
+			return;
+		}
+		var minutes = Math.floor(value / 60);
+		var seconds = value % 60;
+		if (seconds < 10 && minutes < 10)
+			setETA_Timer(`0${minutes}:0${seconds}`);
+		else if (seconds < 10 || minutes > 9)
+			setETA_Timer(`${minutes}:0${seconds}`);
+		else setETA_Timer(`${minutes}:${seconds}`);
+	};
+
+	// const updateTimerShown = (value) => {
+	// 	console.log("timer_value:", value);
+	// 	console.log("shownTimer:", shownTimer);
+	// 	if (shownTimer) {
+	// 		console.log("timer running already...");
+	// 		clearInterval(shownTimer);
+	// 	}
+
+	// 	const diffDays = Math.ceil(
+	// 		(value[1] - value[0]) / (1000 * 60 * 60 * 24)
+	// 	);
+	// 	let reqs_time = diffDays * 12;
+
+	// 	shownTimer = setInterval(() => {
+	// 		if (!reqs_time) {
+	// 			clearInterval(shownTimer);
+	// 		} else {
+	// 			showTime(reqs_time);
+	// 			reqs_time--;
+	// 		}
+	// 	}, 1000);
+
+	// 	console.log("shownTimer:", shownTimer);
+	// };
+
 	useEffect(() => {
+		// console.log("deferredkey:", deferredKey);
 		const delay = 500;
 		const timer = setTimeout(async () => {
 			let isApiKeyValid = false;
@@ -170,6 +212,16 @@ export default function Analytics() {
 				console.log("valid key");
 				setApiKeyStatus("success");
 				updateApiKey(dispatch, state, deferredKey);
+				// setTimeout(() => {
+				// 	console.log(new Date().toString());
+				// 	console.log(state);
+				// 	// updateETA_Timer();
+				// }, 2000);
+				// setTimeout(() => {
+				// 	console.log(new Date().toString());
+				// 	console.log(state);
+				// 	// updateETA_Timer();
+				// }, 12000);
 			} else {
 				console.log("invalid key");
 				setApiKeyStatus("error");
@@ -195,15 +247,21 @@ export default function Analytics() {
 
 	return (
 		<main className='bg-slate-50 p-6 sm:p-10 w-min-full'>
-			{/* <Flex
+			<Flex
 				style={{
-					alignItems: "flex-start",
+					alignItems: "center",
 					justifyContent: "center",
 					marginBottom: "20px",
+					flexDirection: "column",
 				}}
 			>
-				<div className='timer_card'>{eta_timer}</div>
-			</Flex> */}
+				<div className='timer_card'>ETA: {eta_timer}</div>
+				<div className='timer_card_text'>
+					The Open AI API allows just 5 requests per minute.
+					<br /> You're welcome to leave this tab open and return at a
+					later time.
+				</div>
+			</Flex>
 			<Flex
 				style={{
 					alignItems: "center",
@@ -330,13 +388,13 @@ export default function Analytics() {
 					gap: "2rem",
 				}}
 			>
-				<Popover title='Your OpenAI key is stored locally'>
-					<label>OpenAI Key: </label>
+				<Popover title='Your OpenAI Session Id is stored locally'>
+					<label>OpenAI SessionId: </label>
 					<span>
 						<Input.Password
 							status={apiKeyStatus}
 							className='max-w-sm'
-							placeholder='OpenAI key(stored locally)'
+							placeholder='OpenAI Session ID(stored locally)'
 							onChange={(e) => {
 								setApiKey(e.target.value);
 							}}
@@ -353,14 +411,14 @@ export default function Analytics() {
 						>
 							click{" "}
 							<a
-								href='https://platform.openai.com/account/api-keys'
+								href='https://able-newt-c08.notion.site/Puddl-io-Get-OpenAI-Session-ID-14cc3ebb8f304d68840f065ba679aa17'
 								style={{ color: "blue" }}
 								target='_blank'
 								rel='noreferrer'
 							>
 								here
 							</a>{" "}
-							for your OpenAI key
+							for your Session ID
 						</sub>
 					</span>
 				</Popover>

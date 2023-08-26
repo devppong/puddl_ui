@@ -254,6 +254,7 @@ export const updateOrgID = async (dispatch, state, key) => {
 };
 
 export const updateDateRange = async (dispatch, state, date_range) => {
+	// console.log("date_range_updated...");
 	dispatch({
 		type: "UPDATE_DATE_RANGE",
 		fieldName: "date_range",
@@ -328,9 +329,8 @@ export const updateSelectedUser = async (dispatch, state, selectedUser) => {
 		let { kpi_data } = state;
 		parseKPIData(dispatch, kpi_data);
 	} else {
-		console.log("Hello");
 		let { user_level_data } = state;
-		console.log("user_level_data: ", user_level_data);
+		// console.log("user_level_data: ", user_level_data);
 
 		// getUserLevelMetrics(dispatch,state)
 
@@ -381,7 +381,7 @@ export const updateSelectedCurrency = async (state, dispatch, value) => {
 };
 
 export const getCostMetrics = async (dispatch, state, date_range) => {
-	console.log("getCostMetrics");
+	// console.log("getCostMetrics");
 	let start_date = moment(date_range[0]).format("YYYY-MM-DD");
 	let end_date = moment(date_range[0]).add("1", "days").format("YYYY-MM-DD");
 	if (date_range[1]) {
@@ -453,7 +453,7 @@ export const getUserLevelMetrics = async (
 	date_range,
 	selectedUser
 ) => {
-	console.log("getUserLevelMetrics");
+	// console.log("getUserLevelMetrics");
 	let org_id = getOrgID(state);
 
 	if (!org_id) return;
@@ -513,12 +513,16 @@ export const getUserLevelMetrics = async (
 		fieldName: "user_level_data",
 	});
 	let { filters } = state;
-	console.log("metrics:", selectedUser);
+	// console.log("metrics:", selectedUser);
 	parseUserLevelData(dispatch, state, user_level_data, selectedUser, filters);
 };
 
 export const getKPIMetrics = async (dispatch, state, date_range) => {
-	console.log("KPI metrics");
+	// console.log("KPI metrics");
+	var cols = document.getElementsByClassName("loading-spinner");
+	for (let i = 0; i < cols.length; i++) {
+		cols[i].style.display = "block";
+	}
 	let start_date = moment(date_range[0]).format("YYYY-MM-DD");
 	let end_date = moment(date_range[0]).add("1", "days").format("YYYY-MM-DD");
 	if (date_range[1]) {
@@ -536,12 +540,13 @@ export const getKPIMetrics = async (dispatch, state, date_range) => {
 	let kpi_data = [];
 	let kpi_retries = [];
 	let api_eta = datesInRange.length * 12;
-	console.log("timer__:", api_eta);
+	// console.log("timer__:", api_eta);
 	dispatch({
-		type: "UPDATE_API_ETA",
+		type: "INIT_API_ETA",
 		payload: api_eta,
 		fieldName: "api_eta",
 	});
+
 	for (const date of datesInRange) {
 		await new Promise((resolve) => setTimeout(resolve, 12000));
 		let url = `https://api.openai.com/v1/usage?date=${date}`;
@@ -549,10 +554,11 @@ export const getKPIMetrics = async (dispatch, state, date_range) => {
 		console.log("respo: ", respo);
 		if (respo === 429) {
 			kpi_retries.push(url);
-			api_eta += 12;
+			// api_eta += 12;
+			// console.log("timer__:", api_eta);
 			dispatch({
-				type: "UPDATE_API_ETA",
-				payload: api_eta,
+				type: "ADD_API_ETA",
+				payload: 12,
 				fieldName: "api_eta",
 			});
 		} else {
@@ -568,10 +574,11 @@ export const getKPIMetrics = async (dispatch, state, date_range) => {
 		console.log("respo: ", respo);
 		if (respo === 429) {
 			kpi_retries.push(retryUrl);
-			api_eta += 12;
+			// api_eta += 12;
+			// console.log("timer__:", api_eta);
 			dispatch({
-				type: "UPDATE_API_ETA",
-				payload: api_eta,
+				type: "ADD_API_ETA",
+				payload: 12,
 				fieldName: "api_eta",
 			});
 		} else {
@@ -609,6 +616,7 @@ export const validateApiKey = async (api_key) => {
 
 	let url = `https://api.openai.com/v1/engines`;
 	let engines = await axiosGet(url, headers);
+	if (engines === 401) return false;
 	if (!engines) return false;
 	if (engines.error) {
 		return false;
@@ -679,8 +687,8 @@ export const parseUserLevelData = (
 	selectedUser = "All Users",
 	filters
 ) => {
-	console.log("parseUserLevelData");
-	console.log("selectedUser", state.selectedUser);
+	// console.log("parseUserLevelData");
+	// console.log("selectedUser", state.selectedUser);
 	let requests_map = {};
 	let total_requests = 0;
 	let indi_requests_map = {};

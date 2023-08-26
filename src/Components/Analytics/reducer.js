@@ -30,10 +30,22 @@ export default function reducer(state, action) {
 				[action.fieldName]: action.payload,
 			};
 		}
-		case "UPDATE_API_ETA": {
+		case "INIT_API_ETA": {
 			return {
 				...state,
 				[action.fieldName]: action.payload,
+			};
+		}
+		case "ADD_API_ETA": {
+			return {
+				...state,
+				[action.fieldName]: state[action.fieldName] + action.payload,
+			};
+		}
+		case "DEL_API_ETA": {
+			return {
+				...state,
+				[action.fieldName]: state[action.fieldName] - action.payload,
 			};
 		}
 		case "UPDATE_TOTAL_USAGE": {
